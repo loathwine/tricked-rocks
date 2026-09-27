@@ -346,7 +346,12 @@ input[type=range] { width: 100%; accent-color: var(--cpu); height: 28px; }
 @media (max-width: 640px) {
   body { font-size: 16px; }
   .act { padding: 76px 16px 100px; }
-  .race-grid, .compare { grid-template-columns: 1fr; }
+  .compare { grid-template-columns: 1fr; }
+  .race-grid { gap: 10px; }                       /* keep the two racers side by side */
+  .race .panel { padding: 12px 10px; }
+  .race .panel > .tag { font-size: 10px; left: 8px; }
+  .race-time span { font-size: 16px; }
+  .race-time { font-size: 12px; }
   .bar-row { grid-template-columns: 1fr; gap: 4px; }
   .lede { font-size: 17px; }
   .pips { display: none; }
@@ -409,3 +414,55 @@ input[type=range] { width: 100%; accent-color: var(--cpu); height: 28px; }
   .ls-lanes { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 480px) { .ls-lanes { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---- opt-in code ---- */
+body:not(.code-mode) .code-only { display: none !important; }
+body.code-mode .plain-only { display: none !important; }
+.code-toggle {
+  display: block; width: 100%; margin-top: 12px; padding: 10px 12px; cursor: pointer;
+  background: transparent; color: var(--sky); border: 2px dashed var(--line-2);
+  font-family: var(--font-mono); font-size: 13px; text-align: left;
+}
+.code-toggle:hover { border-color: var(--sky); background: rgba(123,134,255,.08); }
+.code-toggle .ct-on { display: none; }
+body.code-mode .code-toggle .ct-on { display: inline; }
+body.code-mode .code-toggle .ct-off { display: none; }
+.play-row { margin: 14px 0 16px; }
+.recipe-intro { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+body:not(.code-mode) .recipe { font-family: var(--font-body); font-size: 15px; }
+.worker-row { margin-bottom: 0; }
+.ai-explain > * { min-width: 0; }
+.recipe-mini { overflow-x: auto; }
+.tool-help { display: none; font-size: 14px; margin: 10px 0 0; color: #d3d0f5; }
+
+/* ---- phones ---- */
+@media (max-width: 900px) {
+  .builder { display: flex; flex-direction: column; }
+  .builder .side { display: contents; }
+  .builder .side > .panel:first-child { order: -1; }
+  .builder .die-panel { align-self: center; }
+  .palette { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tool { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 8px 6px; gap: 6px; }
+  .tool .ico { width: 48px; height: 48px; }
+  .tool > span:last-child { font-size: 0; }                  /* hide long description… */
+  .tool > span:last-child b { font-size: 11px; }             /* …keep the name */
+  .tool > span:last-child .tool-size { font-size: 11px; display: block; }
+  .tool-help { display: block; }
+}
+@media (max-width: 640px) {
+  .ls-lanes { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .lane { padding: 6px; font-size: 11px; }
+  .lane-px { width: 16px; height: 16px; }
+  .lane-s { font-size: 10px; }
+  .recipe-mini { font-size: 11px; }
+  .mm-layout { gap: 10px; }
+  .zoom-canvas { max-width: 360px; }
+  .zoom-readout { flex-direction: column; gap: 6px; }
+}
+
+@media (max-width: 900px) {
+  /* keep the screen in view while scrolling through the recipe */
+  .cpu-demo .screen-panel { position: sticky; top: 48px; z-index: 5; padding: 12px; }
+  .cpu-demo .screen-panel .stats-row { margin-top: 8px; }
+  .cpu-demo .screen-panel .stats-row b { font-size: 18px; }
+}

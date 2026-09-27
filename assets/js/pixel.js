@@ -57,21 +57,21 @@
 
   // Each step: code shown to the learner, optional condition, and what it does.
   const STEPS = [
-    { code: 'color = <span class="fn" data-fn="skyColor">skyColor</span>(x, y)', viz: "sky",
+    { code: 'color = <span class="fn" data-fn="skyColor">skyColor</span>(x, y)', viz: "sky", plain: "Pick a sky color for this height",
       run: (s) => { s.color = skyColor(s.x, s.y); }, show: (s) => ({ color: s.color }) },
-    { code: 'd = <span class="fn" data-fn="distance">distance</span>((x, y) ↔ SUN)', viz: "dist",
+    { code: 'd = <span class="fn" data-fn="distance">distance</span>((x, y) ↔ SUN)', viz: "dist", plain: "Measure how far it is to the sun",
       run: (s) => { s.d = distance(s.x, s.y, K.SUN_X, K.SUN_Y); }, show: (s) => ({ num: "d = " + s.d.toFixed(1) }) },
-    { code: '<span class="k">if</span> d &lt; SUN_R: color = <span class="sw" style="--c:#ffe066"></span>SUN', viz: "sun",
+    { code: '<span class="k">if</span> d &lt; SUN_R: color = <span class="sw" style="--c:#ffe066"></span>SUN', viz: "sun", plain: "Inside the sun? Paint it yellow",
       cond: (s) => s.d < K.SUN_R, run: (s) => { s.color = COL.SUN; } },
-    { code: 'h = <span class="fn" data-fn="mountainHeight">mountainHeight</span>(x)', viz: "mtn",
+    { code: 'h = <span class="fn" data-fn="mountainHeight">mountainHeight</span>(x)', viz: "mtn", plain: "Look up the mountain height here",
       run: (s) => { s.h = mountainHeight(s.x); }, show: (s) => ({ num: "h = " + s.h }) },
-    { code: '<span class="k">if</span> y ≥ h: color = <span class="sw" style="--c:#2a1d4f"></span>ROCK', viz: "rock",
+    { code: '<span class="k">if</span> y ≥ h: color = <span class="sw" style="--c:#2a1d4f"></span>ROCK', viz: "rock", plain: "Behind the mountain? Paint it rock",
       cond: (s) => s.y >= s.h, run: (s) => { s.color = COL.ROCK; } },
-    { code: '<span class="k">if</span> y ≥ SEA: color = <span class="fn" data-fn="waterColor">waterColor</span>(y)', viz: "sea",
+    { code: '<span class="k">if</span> y ≥ SEA: color = <span class="fn" data-fn="waterColor">waterColor</span>(y)', viz: "sea", plain: "Below the sea line? Paint it water",
       cond: (s) => s.y >= K.SEA, run: (s) => { s.color = waterColor(s.y); } },
-    { code: '<span class="k">if</span> <span class="fn" data-fn="isGlint">isGlint</span>(x, y): color = <span class="sw" style="--c:#ffc46e"></span>GLINT', viz: "glint",
+    { code: '<span class="k">if</span> <span class="fn" data-fn="isGlint">isGlint</span>(x, y): color = <span class="sw" style="--c:#ffc46e"></span>GLINT', viz: "glint", plain: "In the sun's reflection? Add a glint",
       cond: (s) => isGlint(s.x, s.y), run: (s) => { s.color = COL.GLINT; } },
-    { code: '<span class="k">return</span> color', viz: "ret", run: () => {} },
+    { code: '<span class="k">return</span> color', viz: "ret", plain: "Done: that's this pixel's color", run: () => {} },
   ];
 
   const FN_CODE = {

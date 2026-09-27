@@ -19,6 +19,19 @@
     try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
   };
 
+  // ---------- "see the code" mode: technical details are opt-in ----------
+  let codeMode = !!saved.code;
+  const codeListeners = [];
+  function setCode(on) {
+    codeMode = on;
+    document.body.classList.toggle("code-mode", on);
+    $$("[data-code-toggle]").forEach((b) => b.setAttribute("aria-pressed", String(on)));
+    save({ code: on });
+    codeListeners.forEach((f) => f());
+  }
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-code-toggle]")) { SFX.click(); setCode(!codeMode); } });
+  setCode(codeMode);
+
   // ======================================================================
   //  ACT CONTROLLER
   // ======================================================================
@@ -324,6 +337,10 @@
   const swatch = (c) => `<span class="sw" style="--c:${c}"></span>`;
   function stepValue(i, k) {
     const st = STEPS[k], s = TRACE[i][k];
+    if (!codeMode) {
+      if (k === S1 - 1) return `→ ${swatch(s.color)}`;
+      return st.cond ? (s.took ? `yes → ${swatch(s.color)}` : "no") : "";
+    }
     if (k === S1 - 1) return `→ ${swatch(s.color)}<span class="out">${s.color}</span>`;
     if (st.cond) return s.took ? `true → ${swatch(s.color)}` : `false, skip`;
     const v = st.show(s);
@@ -390,8 +407,11 @@
 
   inits[1] = () => {
     const rec = $("#cpu-recipe");
-    rec.innerHTML = STEPS.map((st, k) => `<li data-k="${k}"><span class="code">${st.code}</span><span class="val"></span></li>`).join("");
+    rec.innerHTML = STEPS.map((st, k) => `<li data-k="${k}"><span class="code"></span><span class="val"></span></li>`).join("");
     const lis = $$("li", rec);
+    const fillRecipe = () => lis.forEach((l, k) => { l.querySelector(".code").innerHTML = codeMode ? STEPS[k].code : STEPS[k].plain; });
+    fillRecipe();
+    codeListeners.push(() => { fillRecipe(); if (!codeMode) dbg = null; draw(); });
     PX.drawSprite($("#cpu-sprite").getContext("2d"), PX.SPRITES.cpu, PX.PAL_CPU);
 
     const scr = makeScreen($("#cpu-canvas"));
@@ -434,7 +454,8 @@
         : playing ? `painting pixel ${cur + 1} of 576` : t > 0 ? "paused" : "waiting…";
 
       ov.clearRect(0, 0, ovCv.width, ovCv.height);
-      const vk = hover >= 0 ? hover : show ? f.k : -1;
+      // on-picture annotations are part of the opt-in code view
+      const vk = !codeMode ? -1 : hover >= 0 ? hover : show ? f.k : -1;
       if (vk >= 0) drawViz(ov, STEPS[vk].viz, f ? f.i : EXAMPLE);
       else if (f) { ov.strokeStyle = "#fff"; ov.lineWidth = 2; ov.strokeRect((f.i % W) * 10, Math.floor(f.i / W) * 10, 10, 10); }
     }
@@ -486,6 +507,7 @@
       const r = e.currentTarget.getBoundingClientRect();
       const x = clamp(Math.floor(((e.clientX - r.left) / r.width) * W), 0, W - 1);
       const y = clamp(Math.floor(((e.clientY - r.top) / r.height) * H), 0, H - 1);
+      if (!codeMode) setCode(true); // clicking a pixel opens the debugger
       inspect(y * W + x, 0);
       $("#dbg-hint").textContent = "Press STEP ▶ to run the next line.";
     });
@@ -500,7 +522,8 @@
     });
     lis.forEach((l, k) => {
       l.addEventListener("pointerenter", () => { hover = k; draw(); });
-      l.addEventListener("pointerleave", () => { hover = -1; draw(); });
+      l.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") { hover = -1; draw(); } });
+      l.addEventListener("click", () => { hover = hover === k ? -1 : k; draw(); });
     });
 
     if (revealed) $("#cpu-problem").hidden = false;
@@ -624,6 +647,7 @@
     }
     function selectTool(k) {
       tool = k;
+      $("#tool-help").innerHTML = `<b>${TOOLS[k].name}</b> · ${TOOLS[k].size}: ${TOOLS[k].desc}`;
       $$(".tool").forEach((b) => b.classList.toggle("sel", b.dataset.tool === k));
     }
 
@@ -910,7 +934,7 @@
     }
     function renderLanes() {
       const st = lsK >= 0 ? STEPS[lsK] : null;
-      $("#ls-instr").innerHTML = st ? st.code : "load your own x, y";
+      $("#ls-instr").innerHTML = st ? (codeMode ? st.code : st.plain) : "load your own x, y";
       $("#ls-stepno").textContent = `step ${lsK + 1} / 8`;
       $("#ls-lanes").innerHTML = lanes.map((tr, l) => {
         const s = lsK >= 0 ? tr[lsK] : { x: LS_X0 + l, y: LS_Y, color: null };
@@ -952,6 +976,7 @@
       $(".ls-where").classList.remove("pointing");
       $$(".lane").forEach((c) => c.classList.remove("pointed"));
     });
+    codeListeners.push(() => { if (!$("#lockstep").hidden) renderLanes(); });
     $("#ls-step").addEventListener("click", lsStep);
     $("#ls-auto").addEventListener("click", () => {
       if (lsAuto) { clearInterval(lsAuto); lsAuto = null; $("#ls-auto").textContent = "AUTO"; return; }
@@ -976,12 +1001,13 @@
   inits[3] = () => {
     const cv = $("#zoom-canvas");
     // world: 16×8 blocks, each block = 2 control cols + 16 ALU cols × 8 rows = 128 ALUs
-    const BW = 18, BH = 8, GAP = 2, NX = 16, NY = 8;
+    const narrow = innerWidth < 640; // portrait phones: stack the 128 blocks 8 wide instead of 16
+    const BW = 18, BH = 8, GAP = 2, NX = narrow ? 8 : 16, NY = narrow ? 16 : 8;
     const WW = NX * BW + (NX + 1) * GAP, WH = NY * BH + (NY + 1) * GAP;
     cv.width = WW * 2; cv.height = WH * 2;
     cv.style.aspectRatio = `${WW} / ${WH}`;
     const ctx = cv.getContext("2d");
-    const home = { bx: 7, by: 3 };
+    const home = narrow ? { bx: 3, by: 7 } : { bx: 7, by: 3 };
     const yourWorkers = saved.workers || 48;
     const perRow = Math.max(1, Math.round(yourWorkers / 8));
     let z = 0; // 0 = your chip filling the view, 1 = full die

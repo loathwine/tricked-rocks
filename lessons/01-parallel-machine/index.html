@@ -45,7 +45,7 @@
   <div class="act-head">
     <p class="eyebrow pixel">ACT 1</p>
     <h2>One <span class="cpu">brilliant</span> worker</h2>
-    <p class="lede">A <b class="cpu">CPU</b> core is a brilliant, lightning-fast worker. It follows a recipe one step at a time. Here's the recipe for <b>one pixel</b> of a tiny 32×18 screen: a function that takes the pixel's position and returns its color. Press play and watch it paint, or <b>click any pixel</b> to debug it step by step.</p>
+    <p class="lede">A <b class="cpu">CPU</b> core is a brilliant, lightning-fast worker. It follows a recipe, one step at a time. Here's the recipe for <b>one pixel</b> of a tiny 32×18 screen. Press play and watch it paint.</p>
   </div>
 
   <div class="cpu-demo">
@@ -55,7 +55,7 @@
         <canvas id="cpu-canvas" class="px screen" width="32" height="18"></canvas>
         <canvas id="cpu-overlay" class="overlay" width="320" height="180"></canvas>
       </div>
-      <p class="muted tiny">Click a pixel to inspect it. Hover a line of the recipe to see what it looks at.</p>
+      <p class="muted tiny code-only">Click a pixel to inspect it. Hover (or tap) a line of the recipe to see what it looks at.</p>
       <div class="stats-row">
         <div><span class="lbl">PIXEL</span><b id="cpu-pixel">0</b>/576</div>
         <div><span class="lbl">STEPS DONE</span><b id="cpu-steps">0</b></div>
@@ -64,14 +64,6 @@
 
     <div class="panel recipe-panel">
       <span class="tag">THE RECIPE · 8 STEPS PER PIXEL</span>
-      <div class="fn-sig"><span class="k">function</span> renderPixel(<b class="in">x</b>, <b class="in">y</b>) → <b class="out">color</b> <span class="muted" id="dbg-where"></span></div>
-      <ol class="recipe" id="cpu-recipe"></ol>
-      <div class="consts">shared by every pixel: <code>SUN = (20, 8)</code> <code>SUN_R = 4.2</code> <code>SEA = 11</code></div>
-      <div class="dbg-controls">
-        <button class="btn ghost small" id="dbg-prev" title="Previous step">◀</button>
-        <button class="btn ghost small" id="dbg-next" title="Next step">STEP ▶</button>
-        <span class="muted tiny-inline" id="dbg-hint">Debugger: click a pixel, then step.</span>
-      </div>
       <div class="worker-row">
         <canvas id="cpu-sprite" class="px sprite" width="16" height="16"></canvas>
         <div>
@@ -79,16 +71,26 @@
           <span class="muted" id="cpu-status">waiting…</span>
         </div>
       </div>
-      <div class="controls">
-        <button class="btn cpu-btn small" id="cpu-play">▶ PLAY</button>
+      <div class="controls play-row">
+        <button class="btn cpu-btn" id="cpu-play">▶ PLAY</button>
         <div class="speed" id="cpu-speed" role="group" aria-label="Speed">
           <button class="btn ghost small on" data-speed="3">1×</button>
           <button class="btn ghost small" data-speed="40">10×</button>
           <button class="btn ghost small" data-speed="400">100×</button>
           <button class="btn ghost small" data-speed="4000">MAX</button>
         </div>
-        <button class="btn ghost small" id="cpu-reset">↺</button>
+        <button class="btn ghost small" id="cpu-reset" title="Reset">↺</button>
       </div>
+      <p class="plain-only recipe-intro">For every pixel, the CPU works through these steps:</p>
+      <div class="fn-sig code-only"><span class="k">function</span> renderPixel(<b class="in">x</b>, <b class="in">y</b>) → <b class="out">color</b> <span class="muted" id="dbg-where"></span></div>
+      <ol class="recipe" id="cpu-recipe"></ol>
+      <div class="consts code-only">shared by every pixel: <code>SUN = (20, 8)</code> <code>SUN_R = 4.2</code> <code>SEA = 11</code></div>
+      <div class="dbg-controls code-only">
+        <button class="btn ghost small" id="dbg-prev" title="Previous step">◀</button>
+        <button class="btn ghost small" id="dbg-next" title="Next step">STEP ▶</button>
+        <span class="muted tiny-inline" id="dbg-hint">Debugger: click a pixel, then step.</span>
+      </div>
+      <button class="code-toggle" data-code-toggle aria-pressed="false"><span class="ct-off">&lt;/&gt; See the code (and debug it)</span><span class="ct-on">Hide the code</span></button>
     </div>
   </div>
 
@@ -155,6 +157,7 @@
       <div class="panel">
         <span class="tag">PARTS</span>
         <div class="palette" id="palette"></div>
+        <p class="tool-help" id="tool-help"></p>
       </div>
       <div class="panel build-stats">
         <span class="tag">SPEC SHEET</span>
@@ -296,17 +299,18 @@
   </div>
 
   <div class="panel ai-race-panel">
-    <span class="tag">RUN A NEURAL NETWORK LAYER ON YOUR CHIP</span>
+    <span class="tag">RUN A NEURAL NETWORK LAYER</span>
     <div class="ai-explain">
       <div>
         <p>A tiny layer of <b style="color:var(--hot)">24 neurons</b>, each with 16 weights (the columns of <b style="color:var(--hot)">B</b>), looking at <b style="color:var(--sky)">24 inputs</b> of 16 numbers each (the rows of <b style="color:var(--sky)">A</b>). Every answer cell in <b class="gpu">C</b> is one neuron's response to one input: 576 answers.</p>
         <p class="muted">Watch the gold markers: that's step <code>k</code>, one multiply-add. The CPU walks one row and one column at a time. Your chip lights up many rows and columns at once, and all their gold markers move together, in lockstep.</p>
       </div>
-      <pre class="recipe-mini"><span class="k">function</span> answerCell(<b class="in">i</b>, <b class="in">j</b>) → <b class="out">number</b>
+      <pre class="recipe-mini code-only"><span class="k">function</span> answerCell(<b class="in">i</b>, <b class="in">j</b>) → <b class="out">number</b>
   sum = 0
   <span class="k">repeat</span> k = 1 … 16:        <span class="muted">← one step each</span>
     sum = sum + A[i][k] × B[k][j]
   <span class="k">return</span> sum</pre>
+      <button class="code-toggle plain-only" data-code-toggle><span class="ct-off">&lt;/&gt; See the code</span></button>
     </div>
     <div class="race-grid">
       <div>
