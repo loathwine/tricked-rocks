@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tricked Rocks</title>
+<meta name="description" content="Interactive lessons on how computers really work. Build it yourself, from sand to AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Silkscreen&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 72px 20px 80px; }
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; margin-bottom: 72px; }
+  .hero h1 span { display: block; }
+  .hero p { font-size: 20px; color: #d3d0f5; max-width: 520px; }
+  .hero canvas { width: 100%; aspect-ratio: 16 / 9; border: 2px solid var(--line-2); background: #07060f; }
+  .eyebrow { font-size: 13px; color: var(--muted); }
+  .path { display: grid; gap: 14px; }
+  .ep {
+    display: grid; grid-template-columns: 72px 1fr auto; gap: 18px; align-items: center;
+    padding: 18px 20px; background: var(--panel); border: 2px solid var(--line);
+    color: var(--ink); text-decoration: none; position: relative;
+  }
+  .ep .n { font-family: var(--font-pixel); font-size: 28px; color: var(--dim); }
+  .ep h3 { margin: 0 0 4px; }
+  .ep p { margin: 0; color: var(--muted); font-size: 15px; }
+  .ep .state { font-family: var(--font-pixel); font-size: 12px; color: var(--dim); }
+  .ep.live { border-color: var(--gpu-deep); box-shadow: var(--px) var(--px) 0 rgba(0,0,0,.4); }
+  .ep.live .n { color: var(--gpu); }
+  .ep.live .state { color: var(--gpu); }
+  .ep.live:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 rgba(0,0,0,.45); }
+  .ep:not(.live) { opacity: .7; }
+  .layer { font-family: var(--font-pixel); font-size: 12px; color: var(--muted); margin: 28px 0 8px; }
+  .note { margin-top: 48px; color: var(--muted); font-size: 15px; border-top: 2px dashed var(--line); padding-top: 20px; }
+  @media (max-width: 800px) {
+    .hero { grid-template-columns: 1fr; }
+    .ep { grid-template-columns: 48px 1fr; }
+    .ep .state { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <p class="eyebrow pixel">INTERACTIVE LESSONS · FROM SAND TO AI</p>
+      <h1><span>TRICKED</span><span class="gpu">ROCKS</span></h1>
+      <p>We took sand and taught it to think. Here's how, one layer at a time. Don't just watch it: <b class="gold">build it yourself</b>.</p>
+      <a class="btn" href="lessons/01-parallel-machine/">▶ START EP 01</a>
+    </div>
+    <canvas id="hero" class="px" width="64" height="36"></canvas>
+  </section>
+
+  <p class="layer">THE HOOK</p>
+  <div class="path">
+    <a class="ep live" href="lessons/01-parallel-machine/">
+      <span class="n">01</span>
+      <div><h3>The Parallel Machine</h3><p>Why are GPUs so fast, so expensive, and so loved by AI? Build a chip and race a CPU.</p></div>
+      <span class="state">▶ PLAY</span>
+    </a>
+  </div>
+
+  <p class="layer">THEN, FROM THE GROUND UP</p>
+  <div class="path">
+    <div class="ep"><span class="n">02</span><div><h3>The Switch</h3><p>Transistors: how a rock can be told "on" or "off".</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">03</span><div><h3>Gates</h3><p>AND, OR, NOT, and why NAND alone can build everything.</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">04</span><div><h3>Teaching Rocks to Count</h3><p>Wire gates into an adder. 1 + 1 = 10.</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">05</span><div><h3>Memory</h3><p>A loop of gates that remembers one bit, then a billion.</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">06</span><div><h3>The CPU</h3><p>Fetch, decode, execute. Build a tiny processor and run your first program.</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">07</span><div><h3>Assembly → C</h3><p>From raw instructions to real code, and what the compiler does for you.</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">08</span><div><h3>The GPU, For Real</h3><p>Warps, memory, and hiding latency. Build a tiny GPU core.</p></div><span class="state">SOON</span></div>
+    <div class="ep"><span class="n">09</span><div><h3>The Thinking Rock</h3><p>Neurons, matrices, and training: how AI actually runs on silicon.</p></div><span class="state">SOON</span></div>
+  </div>
+
+  <p class="note">Each episode has a video and an interactive page. Episode 1 is the hook: the big idea, no prerequisites. Episodes 2 to 9 go all the way down, then climb back up.</p>
+</div>
+
+<script src="assets/js/pixel.js"></script>
+<script>
+  // hero: the sunset scene, "rendered" in parallel bursts
+  (function () {
+    const cv = document.getElementById("hero"), ctx = cv.getContext("2d");
+    const order = Array.from({ length: 576 }, (_, i) => i).sort(() => Math.random() - 0.5);
+    let t = 0;
+    function frame() {
+      t += 1;
+      const shown = Math.min(576, (t % 420) * 4);
+      ctx.fillStyle = "#07060f"; ctx.fillRect(0, 0, 64, 36);
+      for (let k = 0; k < shown; k++) {
+        const i = order[k], c = PX.SCENE[i];
+        const fresh = shown - k < 20 && shown < 576;
+        ctx.fillStyle = fresh ? "#3df5c4" : `rgb(${c[0]},${c[1]},${c[2]})`;
+        ctx.fillRect((i % 32) * 2, Math.floor(i / 32) * 2, 2, 2);
+      }
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+</script>
+</body>
+</html>

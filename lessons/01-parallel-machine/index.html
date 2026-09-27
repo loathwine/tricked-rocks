@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Parallel Machine · Tricked Rocks</title>
+<meta name="description" content="Build a chip, race a CPU, and discover why GPUs are so fast — an interactive lesson.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Silkscreen&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="lesson.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand pixel" href="../../index.html">TRICKED<span class="gpu">ROCKS</span></a>
+  <nav class="pips" id="pips" aria-label="Lesson progress"></nav>
+  <button class="btn ghost small" id="sound-toggle" aria-pressed="true" title="Toggle sound">♪ ON</button>
+</header>
+
+<main id="stage">
+
+<!-- ======================= ACT 0 · HOOK ======================= -->
+<section class="act" data-act="0" data-title="Hook">
+  <canvas id="hook-canvas" class="px hook-bg" width="96" height="54"></canvas>
+  <div class="hook-content">
+    <p class="eyebrow pixel">EP 01 · THE PARALLEL MACHINE</p>
+    <div class="hook-lines" id="hook-lines">
+      <p class="hl">Your screen has <b class="gold" id="hook-px">8,294,400</b> pixels.</p>
+      <p class="hl">It can redraw every one of them <b class="gold" id="hook-hz">60</b> times a second.</p>
+      <p class="hl">In a modern game, each pixel needs hundreds to thousands of calculations.</p>
+      <p class="hl big">That's about <b class="gpu" id="hook-counter">0</b> calculations. Every second.</p>
+      <p class="hl">The chip doing it is made of <b class="cpu">sand</b>.</p>
+    </div>
+    <div class="hook-cta" id="hook-cta">
+      <button class="btn" data-next>▶ HOW?</button>
+      <span class="muted small-note">~15 min · build a chip, race a CPU</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ACT 1 · CPU ======================= -->
+<section class="act" data-act="1" data-title="The CPU">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 1</p>
+    <h2>One <span class="cpu">brilliant</span> worker</h2>
+    <p class="lede">A <b class="cpu">CPU</b> core is a brilliant, lightning-fast worker. It follows a recipe one step at a time. Here's the recipe for <b>one pixel</b> of a tiny 32×18 screen: a function that takes the pixel's position and returns its color. Press play and watch it paint, or <b>click any pixel</b> to debug it step by step.</p>
+  </div>
+
+  <div class="cpu-demo">
+    <div class="panel screen-panel">
+      <span class="tag">SCREEN · 32×18 = 576 PIXELS</span>
+      <div class="screen-wrap">
+        <canvas id="cpu-canvas" class="px screen" width="32" height="18"></canvas>
+        <canvas id="cpu-overlay" class="overlay" width="320" height="180"></canvas>
+      </div>
+      <p class="muted tiny">Click a pixel to inspect it. Hover a line of the recipe to see what it looks at.</p>
+      <div class="stats-row">
+        <div><span class="lbl">PIXEL</span><b id="cpu-pixel">0</b>/576</div>
+        <div><span class="lbl">STEPS DONE</span><b id="cpu-steps">0</b></div>
+      </div>
+    </div>
+
+    <div class="panel recipe-panel">
+      <span class="tag">THE RECIPE · 8 STEPS PER PIXEL</span>
+      <div class="fn-sig"><span class="k">function</span> renderPixel(<b class="in">x</b>, <b class="in">y</b>) → <b class="out">color</b> <span class="muted" id="dbg-where"></span></div>
+      <ol class="recipe" id="cpu-recipe"></ol>
+      <div class="consts">shared by every pixel: <code>SUN = (20, 8)</code> <code>SUN_R = 4.2</code> <code>SEA = 11</code></div>
+      <div class="dbg-controls">
+        <button class="btn ghost small" id="dbg-prev" title="Previous step">◀</button>
+        <button class="btn ghost small" id="dbg-next" title="Next step">STEP ▶</button>
+        <span class="muted tiny-inline" id="dbg-hint">Debugger: click a pixel, then step.</span>
+      </div>
+      <div class="worker-row">
+        <canvas id="cpu-sprite" class="px sprite" width="16" height="16"></canvas>
+        <div>
+          <b class="cpu pixel">CPU CORE</b><br>
+          <span class="muted" id="cpu-status">waiting…</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn cpu-btn small" id="cpu-play">▶ PLAY</button>
+        <div class="speed" id="cpu-speed" role="group" aria-label="Speed">
+          <button class="btn ghost small on" data-speed="3">1×</button>
+          <button class="btn ghost small" data-speed="40">10×</button>
+          <button class="btn ghost small" data-speed="400">100×</button>
+          <button class="btn ghost small" data-speed="4000">MAX</button>
+        </div>
+        <button class="btn ghost small" id="cpu-reset">↺</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" id="cpu-problem" hidden>
+    <div class="panel math-panel">
+      <span class="tag">THE PROBLEM</span>
+      <p>That was <b>576 pixels</b> × <b>8 steps</b> = <b class="cpu">4,608 steps</b>. Now a real game, on <b>your</b> screen:</p>
+      <div class="math">
+        <div><b id="pb-px">8,294,400</b><span id="pb-res">pixels</span></div>
+        <div class="op">×</div>
+        <div><b>~1,000</b><span>steps each</span></div>
+        <div class="op">=</div>
+        <div><b class="cpu" id="pb-steps">8.3 billion</b><span>steps per frame</span></div>
+      </div>
+      <p>A CPU core running at <b>4 GHz</b> does about 4 billion steps a second. That's roughly <b class="hot" id="pb-fps">0.5 frames per second</b>. Your screen wants <b id="pb-hz">60</b>.</p>
+      <p class="muted">So just make the CPU faster? Try it.</p>
+    </div>
+
+    <div class="panel oc-panel">
+      <span class="tag">OVERCLOCK IT</span>
+      <div class="oc-grid">
+        <div class="oc-chip">
+          <canvas id="oc-canvas" class="px" width="48" height="48"></canvas>
+        </div>
+        <div class="oc-controls">
+          <label for="oc-slider" class="pixel">CLOCK <b id="oc-ghz">4.0</b> GHz</label>
+          <input type="range" id="oc-slider" min="1" max="8" step="0.1" value="4">
+          <div class="oc-meters">
+            <div><span class="lbl">FRAMES / SEC</span><b id="oc-fps">1.0</b></div>
+            <div><span class="lbl">POWER</span><b id="oc-watts">100 W</b></div>
+          </div>
+          <div class="heat"><div class="heat-fill" id="oc-heat"></div></div>
+          <p class="oc-msg" id="oc-msg">A normal desktop CPU. Drag the slider →</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-row">
+      <p class="muted">Clock speeds stopped climbing around 2005. If one worker can't go faster…</p>
+      <button class="btn" data-next>▶ …HIRE MORE WORKERS</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ACT 2 · BUILD ======================= -->
+<section class="act" data-act="2" data-title="Build a chip">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 2 · <span id="lvl-label">LEVEL 1</span></p>
+    <h2 id="lvl-title">Build a chip</h2>
+    <p class="lede" id="lvl-brief"></p>
+    <div class="lvl-tabs controls" id="lvl-tabs" hidden></div>
+  </div>
+
+  <div class="builder">
+    <div class="panel die-panel">
+      <span class="tag">YOUR SILICON · 8×8 TILES</span>
+      <div class="die-wrap">
+        <div class="die" id="die"></div>
+      </div>
+      <p class="muted tiny">Click or drag to place. Click a part to remove it.</p>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <span class="tag">PARTS</span>
+        <div class="palette" id="palette"></div>
+      </div>
+      <div class="panel build-stats">
+        <span class="tag">SPEC SHEET</span>
+        <div class="spec"><span class="lbl">SILICON USED</span><b id="spec-used">0 / 64</b></div>
+        <div class="spec"><span class="lbl">MATH UNITS (WORKERS)</span><b id="spec-workers">0</b></div>
+        <div class="spec"><span class="lbl">DEADLINE</span><b id="spec-target"></b></div>
+        <p class="warn" id="spec-warn"></p>
+        <div class="build-actions">
+          <button class="btn" id="run-btn">▶ RENDER FRAME</button>
+          <button class="btn ghost small" id="clear-btn">CLEAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="race" id="race" hidden>
+    <div class="race-grid">
+      <div class="panel">
+        <span class="tag cpu">1 CPU CORE</span>
+        <canvas id="race-ref" class="px screen" width="32" height="18"></canvas>
+        <div class="race-bar"><div id="race-ref-bar"></div></div>
+        <div class="race-time"><span id="race-ref-t">0</span> ticks</div>
+      </div>
+      <div class="panel you">
+        <span class="tag gpu">YOUR CHIP</span>
+        <canvas id="race-you" class="px screen" width="32" height="18"></canvas>
+        <div class="race-bar"><div id="race-you-bar"></div></div>
+        <div class="race-time"><span id="race-you-t">0</span> ticks</div>
+      </div>
+    </div>
+    <div class="result" id="result" hidden></div>
+  </div>
+
+  <!-- insight interstitial between level 1 and 2 -->
+  <div class="insight" id="insight" hidden>
+    <div class="panel insight-panel">
+      <span class="tag">LOOK INSIDE A CPU CORE</span>
+      <div class="insight-grid">
+        <div class="core-xray" id="core-xray"></div>
+        <div>
+          <p>A CPU core is huge because it's <b class="cpu">smart</b>. Most of it is <b>brain</b>: parts that guess which way your code will branch, reorder instructions, and juggle a dozen tasks. Then there's <b>cache</b>, a private stash of memory.</p>
+          <p>The part that actually does the math, the <b class="gpu">ALU</b>, is <b>one tile</b> out of sixteen.</p>
+          <p class="big-q">But every pixel follows <b class="gold">the same recipe</b>.<br>Why does every worker need its own brain?</p>
+          <button class="btn" id="insight-go">▶ SHARE ONE BRAIN</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- lockstep explainer: one instruction, six different pixels -->
+  <div class="insight" id="lockstep" hidden>
+    <div class="panel">
+      <span class="tag">ONE SHOUT, SIX DIFFERENT PIXELS</span>
+      <div class="ls-intro">
+        <p>An <b class="gpu">ALU</b> (<i>Arithmetic Logic Unit</i>) is the circuit that actually does math: add, multiply, compare. Beside it sit a few <b>registers</b>, its own tiny notepad. Each ALU starts with <b>its own pixel's x and y</b> written in it.</p>
+        <p>The <b style="color:var(--sky)">control unit</b> shouts <i>what</i> to do. Every ALU does it to <i>its own</i> numbers. Same instruction, different data.</p>
+      </div>
+      <div class="ls-top">
+        <div class="ls-where"><canvas id="ls-mini" class="px screen" width="32" height="18"></canvas><div class="ls-box" id="ls-box"></div><div class="ls-px" id="ls-px" hidden></div><span class="muted tiny">these 6 pixels · row y = 9</span></div>
+        <div class="ls-ctrl"><span class="lbl">CONTROL UNIT SHOUTS</span><code id="ls-instr">get ready…</code><span class="muted tiny" id="ls-stepno">step 0 / 8</span></div>
+      </div>
+      <div class="ls-lanes" id="ls-lanes"></div>
+      <div class="controls">
+        <button class="btn" id="ls-step">STEP ▶</button>
+        <button class="btn ghost small" id="ls-auto">AUTO</button>
+        <button class="btn" id="ls-go" hidden>▶ NOW BUILD IT</button>
+      </div>
+      <div class="ls-note" id="ls-note" hidden>
+        <p><b>Notice the <span class="k">if</span> steps.</b> When the condition is false for some ALUs, they just sit that step out. Nobody runs ahead, everyone stays in lockstep.</p>
+        <p><b>What can <code>renderPixel</code> depend on?</b> Only its inputs: its own <code>x, y</code>, values that are the <i>same for every pixel</i> (here <code>SUN</code> and <code>SEA</code>; in a real game the time, the camera, the lights), and data it reads from memory (like textures). It outputs <b>one color</b>. It never peeks at another pixel's answer, so any pixel can run on any ALU, in any order. That's what makes it parallel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ACT 3 · ZOOM OUT ======================= -->
+<section class="act" data-act="3" data-title="Zoom out">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 3</p>
+    <h2>You just invented the <span class="gpu">GPU</span></h2>
+    <p class="lede">One control unit shouting the same step to a whole row of simple math units. Engineers call it <b>SIMD</b>: <i>Single Instruction, Multiple Data</i>. It's the core idea of every graphics card. Now scale it up.</p>
+  </div>
+  <div class="panel zoom-panel">
+    <span class="tag" id="zoom-tag">YOUR CHIP</span>
+    <canvas id="zoom-canvas" class="px zoom-canvas" width="256" height="128"></canvas>
+    <div class="zoom-readout">
+      <div><span class="lbl">MATH UNITS</span><b class="gpu" id="zoom-count">48</b></div>
+      <div><span class="lbl">SAME TIME, SAME STEP</span><b id="zoom-caption">your chip</b></div>
+    </div>
+    <div class="controls center">
+      <button class="btn" id="zoom-btn">▶ ZOOM OUT</button>
+    </div>
+  </div>
+
+  <div class="compare" id="zoom-compare" hidden>
+    <div class="panel cmp cmp-cpu">
+      <span class="tag cpu">A TOP DESKTOP CPU</span>
+      <div class="cmp-big cpu">~16–24</div>
+      <div class="muted">big, brilliant cores</div>
+      <ul>
+        <li>Each core: ~5–6 GHz</li>
+        <li>Great at twisty, one-thing-after-another work</li>
+      </ul>
+    </div>
+    <div class="panel cmp cmp-gpu">
+      <span class="tag gpu">A TOP GAMING GPU</span>
+      <div class="cmp-big gpu">16,384</div>
+      <div class="muted">simple math units</div>
+      <ul>
+        <li>~2.5 GHz, in lockstep groups of 32</li>
+        <li>~80 trillion calculations per second</li>
+      </ul>
+    </div>
+  </div>
+  <div class="next-row" id="zoom-next" hidden>
+    <p class="muted">That's how your screen gets ~1,000 calculations for each of its <span id="z-px">millions of</span> pixels, <span id="z-hz">60</span> times a second. But why do <b>AI</b> companies buy GPUs by the hundred thousand?</p>
+    <button class="btn" data-next>▶ THE AI CONNECTION</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 4 · AI ======================= -->
+<section class="act" data-act="4" data-title="AI">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 4</p>
+    <h2>AI is a giant grid of <span class="gpu">multiply-adds</span></h2>
+    <p class="lede">Inside a neural network, almost all the work is one operation: <b>matrix multiplication</b>. Each answer cell is a row times a column, multiplied and summed. <b>Hover over (or tap) an answer cell.</b></p>
+  </div>
+
+  <div class="matmul panel">
+    <span class="tag">ROW × COLUMN = CELL</span>
+    <div class="mm-layout">
+      <div class="mm-block"><div class="mm" id="mm-a"></div><span class="muted">inputs</span></div>
+      <div class="mm-op">×</div>
+      <div class="mm-block"><div class="mm" id="mm-b"></div><span class="muted">weights</span></div>
+      <div class="mm-op">=</div>
+      <div class="mm-block"><div class="mm" id="mm-c"></div><span class="muted">answers</span></div>
+    </div>
+    <p class="mm-note" id="mm-note">Every answer cell needs only <b>its own</b> row and column. <b class="gold">No cell waits for any other cell.</b> Sound familiar? It's pixels all over again.</p>
+  </div>
+
+  <div class="panel ai-race-panel">
+    <span class="tag">RUN A NEURAL NETWORK LAYER ON YOUR CHIP · 576 ANSWERS × 16 MULTIPLY-ADDS</span>
+    <div class="race-grid">
+      <div>
+        <p class="pixel cpu tiny-h">1 CPU CORE</p>
+        <canvas id="ai-ref" class="px screen" width="32" height="18"></canvas>
+        <div class="race-bar"><div id="ai-ref-bar"></div></div>
+        <div class="race-time"><span id="ai-ref-t">0</span> ticks</div>
+      </div>
+      <div>
+        <p class="pixel gpu tiny-h">YOUR CHIP · <span id="ai-lanes">48</span> WORKERS</p>
+        <canvas id="ai-you" class="px screen" width="32" height="18"></canvas>
+        <div class="race-bar"><div id="ai-you-bar"></div></div>
+        <div class="race-time"><span id="ai-you-t">0</span> ticks</div>
+      </div>
+    </div>
+    <div class="controls center"><button class="btn" id="ai-run">▶ RUN THE LAYER</button></div>
+    <div class="result" id="ai-result" hidden></div>
+  </div>
+
+  <div class="panel scale-panel" id="scale-panel" hidden>
+    <span class="tag">NOW TRAIN A FRONTIER-SCALE AI MODEL</span>
+    <p>Training a modern frontier model takes roughly <b class="gold">20,000,000,000,000,000,000,000,000</b> operations (2×10²⁵). How long would that take?</p>
+    <div class="bars" id="scale-bars">
+      <div class="bar-row"><span class="bar-lbl cpu">1 CPU core</span><div class="bar"><div class="fill cpu-fill" data-w="100"></div></div><b>≈ 60 million years</b></div>
+      <div class="bar-row"><span class="bar-lbl">1 AI GPU</span><div class="bar"><div class="fill gpu-fill" data-w="70"></div></div><b>≈ 1,600 years</b></div>
+      <div class="bar-row"><span class="bar-lbl gpu">25,000 GPUs</span><div class="bar"><div class="fill gpu-fill" data-w="41"></div></div><b>≈ 3 weeks</b></div>
+    </div>
+    <p class="muted tiny">Log scale. Rough estimates: CPU core ≈ 10¹⁰ ops/s; AI GPU ≈ 4×10¹⁴ ops/s in practice. 60 million years is roughly how long ago the dinosaurs vanished.</p>
+    <div class="next-row">
+      <p class="muted">So… should we throw away CPUs?</p>
+      <button class="btn" data-next>▶ CPU OR GPU?</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ACT 5 · SORT ======================= -->
+<section class="act" data-act="5" data-title="CPU or GPU?">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 5</p>
+    <h2><span class="cpu">CPU</span> or <span class="gpu">GPU</span>?</h2>
+    <p class="lede">16,384 workers are useless if they have to wait for each other. For each job, pick the better chip.</p>
+  </div>
+  <div class="sort-score pixel" id="sort-score">0 / 6</div>
+  <div class="cards" id="cards"></div>
+  <div class="next-row" id="sort-next" hidden>
+    <p class="muted">A computer needs both: the <b class="cpu">CPU</b> is the brilliant manager, the <b class="gpu">GPU</b> is the army. Last question: why does that army cost as much as a car?</p>
+    <button class="btn" data-next>▶ WHY SO EXPENSIVE?</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 6 · COST ======================= -->
+<section class="act" data-act="6" data-title="Why expensive">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 6</p>
+    <h2>Why a GPU costs as much as a <span class="hot">car</span></h2>
+    <p class="lede">A top AI GPU sells for around <b class="gold">$25,000–$40,000</b>. Tap each card.</p>
+  </div>
+  <div class="cost-cards" id="cost-cards">
+    <button class="cost" data-i="0">
+      <span class="cost-n pixel">01</span><span class="cost-t pixel">HUGE</span>
+      <span class="cost-b">About 80 billion transistors on one ~8 cm² slab. That's close to the largest chip the machines can print in one shot. One speck of dust can ruin it, and fewer fit on each wafer.</span>
+    </button>
+    <button class="cost" data-i="1">
+      <span class="cost-n pixel">02</span><span class="cost-t pixel">PRINTED WITH LIGHT</span>
+      <span class="cost-b">The patterns are printed with extreme-ultraviolet light, made by hitting tiny drops of molten tin with a laser about 50,000 times a second. Each machine costs roughly $200 million, and only one company in the world builds them.</span>
+    </button>
+    <button class="cost" data-i="2">
+      <span class="cost-n pixel">03</span><span class="cost-t pixel">DATA-HUNGRY</span>
+      <span class="cost-b">Remember: each ALU only has a tiny notepad. The real inputs (textures for pixels, weights for AI) live in memory, and 16,000 math units eat numbers fast. So stacks of pricey high-bandwidth memory sit right beside the chip, delivering about 3 terabytes a second. That's roughly fifty 4K movies every second.</span>
+    </button>
+    <button class="cost" data-i="3">
+      <span class="cost-n pixel">04</span><span class="cost-t pixel">WANTED</span>
+      <span class="cost-b">Every AI lab on Earth wants tens of thousands of them, and only a few factories can make them. When demand is far bigger than supply, prices climb.</span>
+    </button>
+  </div>
+  <div class="next-row" id="cost-next" hidden>
+    <p class="muted">80 billion transistors is about ten for every person alive. On one chip.</p>
+    <button class="btn" data-next>▶ ONE LAST THING</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 7 · FINALE ======================= -->
+<section class="act" data-act="7" data-title="Finale">
+  <canvas id="finale-canvas" class="px finale-canvas" width="160" height="72"></canvas>
+  <div class="finale-lines" id="finale-lines">
+    <p class="fl">We took <b class="cpu">sand</b>.</p>
+    <p class="fl">Purified it until only one atom in a billion was wrong.</p>
+    <p class="fl">Grew it into a perfect crystal. Sliced it. Printed <b class="gold">80 billion switches</b> on it with light.</p>
+    <p class="fl">Then we ran electricity through it, and it did math. <b class="gpu">Trillions of times a second.</b></p>
+    <p class="fl huge pixel">We tricked rocks<br>into thinking.</p>
+    <div class="controls center"><button class="btn" id="finale-next">▶ CONTINUE</button></div>
+  </div>
+  <div class="finale-card panel" id="finale-card" hidden>
+    <span class="tag">WHAT YOU DID TODAY</span>
+    <ul class="achievements" id="achievements"></ul>
+    <div class="next-ep">
+      <p class="eyebrow pixel">NEXT · EP 02</p>
+      <h3>The Switch</h3>
+      <p class="muted">You built a chip out of "math units". But how does a rock actually add 1 + 1? Next time we go all the way down, to a single switch, and build back up.</p>
+    </div>
+    <div class="controls">
+      <a class="btn" href="../../index.html">◀ SERIES</a>
+      <button class="btn ghost" id="replay">↺ REPLAY</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="act-nav" id="act-nav">
+  <button class="btn ghost small" id="prev-act">◀ BACK</button>
+  <span class="pixel muted" id="act-label"></span>
+  <button class="btn ghost small" id="skip-act">NEXT ▶</button>
+</footer>
+
+<script src="../../assets/js/sfx.js"></script>
+<script src="../../assets/js/pixel.js"></script>
+<script src="lesson.js"></script>
+</body>
+</html>

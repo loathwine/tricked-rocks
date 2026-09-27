@@ -1,0 +1,152 @@
+/* ============================================================
+   TRICKED ROCKS — shared theme
+   Palette "Phosphor": ink-violet night, amber CPU, mint GPU.
+   ============================================================ */
+
+:root {
+  --bg: #0b0a17;
+  --bg-2: #110f22;
+  --panel: #17142e;
+  --panel-2: #1f1b3d;
+  --line: #2d2856;
+  --line-2: #3d3772;
+  --ink: #ecebff;
+  --muted: #9a95c4;
+  --dim: #5f5a8f;
+
+  --cpu: #ffab40;
+  --cpu-deep: #b8620f;
+  --gpu: #3df5c4;
+  --gpu-deep: #11917b;
+  --hot: #ff4d8d;
+  --sky: #7b86ff;
+  --gold: #ffe066;
+  --bad: #ff5a5a;
+
+  --font-pixel: "Silkscreen", "Courier New", monospace;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --px: 4px; /* the "pixel" unit for hard shadows & borders */
+  --radius: 0;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* faint pixel grid + vignette */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(123,134,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(123,134,255,.045) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 85%);
+}
+/* scanlines */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  /* plain alpha instead of mix-blend-mode: blending a full-screen fixed layer
+     forces a full re-composite every frame and halved the frame rate */
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
+}
+
+h1, h2, h3, .pixel {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  letter-spacing: .02em;
+  line-height: 1.15;
+  margin: 0 0 .5em;
+}
+h1 { font-size: clamp(34px, 6vw, 72px); }
+h2 { font-size: clamp(26px, 4vw, 44px); }
+h3 { font-size: 20px; }
+
+p { margin: 0 0 1em; }
+a { color: var(--gpu); }
+code, .mono { font-family: var(--font-mono); font-size: .9em; }
+
+.cpu { color: var(--cpu); }
+.gpu { color: var(--gpu); }
+.hot { color: var(--hot); }
+.gold { color: var(--gold); }
+.muted { color: var(--muted); }
+
+canvas.px, img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ---------- pixel buttons ---------- */
+.btn {
+  --c: var(--gpu);
+  --c-deep: var(--gpu-deep);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  color: #0b0a17;
+  background: var(--c);
+  border: 0;
+  padding: 12px 20px 10px;
+  cursor: pointer;
+  box-shadow:
+    0 var(--px) 0 0 var(--c-deep),
+    var(--px) var(--px) 0 var(--px) rgba(0,0,0,.35);
+  transform: translateY(0);
+  transition: transform .06s, box-shadow .06s, filter .15s;
+  user-select: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translateY(var(--px)); box-shadow: 0 0 0 0 var(--c-deep); }
+.btn:disabled { filter: grayscale(1) brightness(.6); cursor: not-allowed; }
+.btn.cpu-btn { --c: var(--cpu); --c-deep: var(--cpu-deep); }
+.btn.hot-btn { --c: var(--hot); --c-deep: #a3244f; }
+.btn.ghost {
+  background: transparent; color: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--line-2);
+}
+.btn.ghost:active { transform: translateY(2px); }
+.btn.small { font-size: 12px; padding: 8px 12px 6px; }
+.btn.on { box-shadow: inset 0 0 0 2px var(--gpu); color: var(--gpu); }
+
+/* ---------- panels ---------- */
+.panel {
+  background: var(--panel);
+  border: 2px solid var(--line);
+  box-shadow: var(--px) var(--px) 0 0 rgba(0,0,0,.4);
+  padding: 20px;
+  position: relative;
+}
+.panel > .tag {
+  position: absolute; top: -12px; left: 14px;
+  font-family: var(--font-pixel); font-size: 12px;
+  background: var(--bg); color: var(--muted);
+  padding: 2px 8px; border: 2px solid var(--line);
+}
+
+.kbd {
+  font-family: var(--font-mono); font-size: 13px;
+  border: 1px solid var(--line-2); padding: 1px 6px; color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
