@@ -269,6 +269,12 @@ input[type=range] { width: 100%; accent-color: var(--cpu); height: 28px; }
 .mm-op { font-family: var(--font-pixel); font-size: 28px; color: var(--dim); }
 .mm-note { text-align: center; margin: 18px auto 0; max-width: 640px; }
 .ai-race-panel { margin-top: 28px; }
+.ai-explain { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; margin-bottom: 20px; }
+.ai-explain p { margin: 0 0 .7em; }
+.recipe-mini { margin: 0; background: var(--bg-2); border: 2px solid var(--line); padding: 12px 14px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--ink); }
+.recipe-mini .k { color: var(--sky); } .recipe-mini .in { color: var(--gold); } .recipe-mini .out { color: var(--gpu); }
+.mm-canvas { width: 100%; aspect-ratio: 1; display: block; background: #07060f; border: 2px solid var(--line-2); }
+@media (max-width: 900px) { .ai-explain { grid-template-columns: 1fr; } }
 .scale-panel { margin-top: 28px; animation: actIn .5s steps(6); }
 .bars { display: grid; gap: 14px; margin: 18px 0; }
 .bar-row { display: grid; grid-template-columns: 130px 1fr 190px; gap: 14px; align-items: center; font-family: var(--font-mono); }

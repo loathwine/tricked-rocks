@@ -296,17 +296,28 @@
   </div>
 
   <div class="panel ai-race-panel">
-    <span class="tag">RUN A NEURAL NETWORK LAYER ON YOUR CHIP · 576 ANSWERS × 16 MULTIPLY-ADDS</span>
+    <span class="tag">RUN A NEURAL NETWORK LAYER ON YOUR CHIP</span>
+    <div class="ai-explain">
+      <div>
+        <p>A tiny layer of <b style="color:var(--hot)">24 neurons</b>, each with 16 weights (the columns of <b style="color:var(--hot)">B</b>), looking at <b style="color:var(--sky)">24 inputs</b> of 16 numbers each (the rows of <b style="color:var(--sky)">A</b>). Every answer cell in <b class="gpu">C</b> is one neuron's response to one input: 576 answers.</p>
+        <p class="muted">Watch the gold markers: that's step <code>k</code>, one multiply-add. The CPU walks one row and one column at a time. Your chip lights up many rows and columns at once, and all their gold markers move together, in lockstep.</p>
+      </div>
+      <pre class="recipe-mini"><span class="k">function</span> answerCell(<b class="in">i</b>, <b class="in">j</b>) → <b class="out">number</b>
+  sum = 0
+  <span class="k">repeat</span> k = 1 … 16:        <span class="muted">← one step each</span>
+    sum = sum + A[i][k] × B[k][j]
+  <span class="k">return</span> sum</pre>
+    </div>
     <div class="race-grid">
       <div>
         <p class="pixel cpu tiny-h">1 CPU CORE</p>
-        <canvas id="ai-ref" class="px screen" width="32" height="18"></canvas>
+        <canvas id="ai-ref" class="mm-canvas" width="451" height="451"></canvas>
         <div class="race-bar"><div id="ai-ref-bar"></div></div>
         <div class="race-time"><span id="ai-ref-t">0</span> ticks</div>
       </div>
       <div>
         <p class="pixel gpu tiny-h">YOUR CHIP · <span id="ai-lanes">48</span> WORKERS</p>
-        <canvas id="ai-you" class="px screen" width="32" height="18"></canvas>
+        <canvas id="ai-you" class="mm-canvas" width="451" height="451"></canvas>
         <div class="race-bar"><div id="ai-you-bar"></div></div>
         <div class="race-time"><span id="ai-you-t">0</span> ticks</div>
       </div>

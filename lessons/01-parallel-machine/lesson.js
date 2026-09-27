@@ -151,15 +151,18 @@
    * Race two schedules on the same clock. The "you" side always takes ~2.6s,
    * the reference runs at the same tick rate, so the gap is felt.
    */
-  function race({ actIndex, image, ref, you, onFrame, onYouDone, onRefDone }) {
-    const refScr = makeScreen(ref.canvas), youScr = makeScreen(you.canvas);
-    const rate = you.sched.total / 3.2;
+  function race({ actIndex, image, ref, you, onFrame, onYouDone, onRefDone, render, duration = 3.2 }) {
+    const refScr = render ? null : makeScreen(ref.canvas), youScr = render ? null : makeScreen(you.canvas);
+    const rate = you.sched.total / duration;
     let t = 0, mult = 1, youDone = false, refDone = false, lastWave = -1;
     const stop = actLoop(actIndex, (dt) => {
       t += dt * rate * mult;
       const ty = Math.min(t, you.sched.total), tr = Math.min(t, ref.sched.total);
-      drawSched(refScr, ref.sched, image, tr, CPU_C);
-      drawSched(youScr, you.sched, image, ty, you.colors || GPU_C);
+      if (render) { render(ref, tr); render(you, ty); }
+      else {
+        drawSched(refScr, ref.sched, image, tr, CPU_C);
+        drawSched(youScr, you.sched, image, ty, you.colors || GPU_C);
+      }
       ref.bar.style.width = (100 * tr) / ref.sched.total + "%";
       you.bar.style.width = (100 * ty) / you.sched.total + "%";
       ref.label.textContent = fmt(tr);
@@ -1114,7 +1117,64 @@
       light(demo); demo = (demo + 7) % (N * N);
     }, 900);
 
-    const S = 16;
+    // ---- the layer: C (24×24) = A (24 inputs × 16 numbers) × B (16 × 24 neurons) ----
+    const S = 16, M = 24; // S multiply-adds per answer, M×M = 576 answers
+    let seed = 11;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const MA = Array.from({ length: M }, () => Array.from({ length: S }, rnd));
+    const MB = Array.from({ length: S }, () => Array.from({ length: M }, rnd));
+    const Cv = [];
+    for (let i = 0; i < M; i++) for (let j = 0; j < M; j++) { let sum = 0; for (let k = 0; k < S; k++) sum += MA[i][k] * MB[k][j]; Cv.push(sum); }
+    const cMin = Math.min(...Cv), cMax = Math.max(...Cv);
+    const HEAT = ["#1f2a6b", "#1e5a8a", "#169e93", "#3df5c4", "#b8ffe9"];
+    const cColor = Cv.map((v) => HEAT[Math.min(HEAT.length - 1, Math.floor(((v - cMin) / (cMax - cMin)) * HEAT.length))]);
+    const shade = (base, v) => `rgba(${base},${(0.18 + v * 0.5).toFixed(2)})`;
+    // layout (in canvas px): A on the left, B on top, C bottom-right, so a cell lines up with its row and column
+    const CELL = 11, OX = S * CELL + CELL, OY = S * CELL + CELL; // C's top-left corner
+    function drawMatmul(side, t) {
+      const ctx = side.canvas.getContext("2d"), sch = side.sched;
+      ctx.fillStyle = "#07060f";
+      ctx.fillRect(0, 0, side.canvas.width, side.canvas.height);
+      const rows = new Set(), cols = new Set();
+      let k = -1;
+      for (let c = 0; c < M * M; c++) if (t >= sch.start[c] && t < sch.end[c]) {
+        rows.add(Math.floor(c / M)); cols.add(c % M);
+        k = Math.floor((t - sch.start[c]) / sch.stepT[c]);
+      }
+      // A: inputs
+      for (let i = 0; i < M; i++) for (let kk = 0; kk < S; kk++) {
+        const on = rows.has(i);
+        ctx.fillStyle = on && kk === k ? "#ffe066" : shade(on ? "160,170,255" : "123,134,255", on ? 0.9 : MA[i][kk] * 0.6);
+        ctx.fillRect(kk * CELL, OY + i * CELL, CELL - 1, CELL - 1);
+      }
+      // B: weights
+      for (let kk = 0; kk < S; kk++) for (let j = 0; j < M; j++) {
+        const on = cols.has(j);
+        ctx.fillStyle = on && kk === k ? "#ffe066" : shade(on ? "255,120,170" : "255,77,141", on ? 0.9 : MB[kk][j] * 0.6);
+        ctx.fillRect(OX + j * CELL, kk * CELL, CELL - 1, CELL - 1);
+      }
+      // C: answers
+      for (let c = 0; c < M * M; c++) {
+        const x = OX + (c % M) * CELL, y = OY + Math.floor(c / M) * CELL;
+        ctx.fillStyle = t >= sch.end[c] ? cColor[c] : t >= sch.start[c] ? side.lane : (Math.floor(c / M) + c) % 2 ? "#110f24" : "#15122b";
+        ctx.fillRect(x, y, CELL - 1, CELL - 1);
+      }
+      // labels in the empty corner
+      ctx.font = "bold 11px JetBrains Mono, monospace";
+      ctx.fillStyle = "#9a95c4";
+      ctx.fillText("B weights ↑", 6, 18);
+      ctx.fillText("← A inputs", 6, 36);
+      ctx.fillStyle = "#ecebff";
+      ctx.fillText("C = A × B ↘", 6, 60);
+      if (k >= 0) { ctx.fillStyle = "#ffe066"; ctx.fillText(`k = ${k + 1} / 16`, 6, 84); }
+      ctx.fillStyle = "#9a95c4";
+      ctx.fillText(`${countBusy(sch, t)} cell${countBusy(sch, t) === 1 ? "" : "s"} at once`, 6, 108);
+    }
+    const countBusy = (sch, t) => { let n = 0; for (let c = 0; c < M * M; c++) if (t >= sch.start[c] && t < sch.end[c]) n++; return n; };
+    const drawIdle = (cv, lane) => drawMatmul({ canvas: cv, sched: { start: new Float64Array(P).fill(Infinity), end: new Float64Array(P).fill(Infinity), stepT: new Float64Array(P).fill(1) }, lane }, 0);
+    drawIdle($("#ai-ref"), "#ffab40");
+    drawIdle($("#ai-you"), "#3df5c4");
+
     const chip = saved.chip && saved.chip.length ? saved.chip : Array.from({ length: 8 }, () => ({ lanes: 6, stepTicks: 2 }));
     const workers = chip.reduce((s, u) => s + u.lanes, 0);
     $("#ai-lanes").textContent = workers;
@@ -1126,9 +1186,9 @@
       const you = schedule(chip, P, S);
       const ref = schedule([{ lanes: 1, stepTicks: 1 }], P, S);
       ctl = race({
-        actIndex: 4, image: MATRIX,
-        ref: { canvas: $("#ai-ref"), bar: $("#ai-ref-bar"), label: $("#ai-ref-t"), sched: ref },
-        you: { canvas: $("#ai-you"), bar: $("#ai-you-bar"), label: $("#ai-you-t"), sched: you, waveTicks: 2 * S },
+        actIndex: 4, render: drawMatmul, duration: 6,
+        ref: { canvas: $("#ai-ref"), bar: $("#ai-ref-bar"), label: $("#ai-ref-t"), sched: ref, lane: "#ffab40" },
+        you: { canvas: $("#ai-you"), bar: $("#ai-you-bar"), label: $("#ai-you-t"), sched: you, waveTicks: 2 * S, lane: "#3df5c4" },
         onYouDone: () => {
           SFX.fanfare();
           const x = speedup(ref.total, you.total);
