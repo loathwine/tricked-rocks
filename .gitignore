@@ -1,0 +1,14 @@
+# generated video artifacts (rebuild with the scripts in video/ep01)
+video/*/out/
+video/*/out_*/
+video/*/frames/
+video/*/previews*/
+video/*/audio/
+
+# credentials and deps for the YouTube uploader (never commit)
+secrets/
+node_modules/
+video/*/upload-log.json
+video/*/thumbs/t*.png
+video/*/thumbs/compare*.jpg
+video/*/durations.txt

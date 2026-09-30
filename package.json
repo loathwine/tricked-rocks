@@ -1,0 +1,7 @@
+{
+  "name": "tricked-rocks-tools",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling only (YouTube uploader). The site itself has no build step or dependencies.",
+  "dependencies": { "googleapis": "^144.0.0" }
+}

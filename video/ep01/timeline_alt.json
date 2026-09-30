@@ -1,0 +1,362 @@
+[
+ {
+  "id": "s01",
+  "scene": "screen",
+  "t0": 0.0,
+  "t1": 9.294,
+  "voice": 0.6,
+  "speech": 8.944,
+  "text": "Right now, you're looking at a screen. It has about two million pixels... and it redraws every single one of them, sixty times a second."
+ },
+ {
+  "id": "s02",
+  "scene": "calc",
+  "t0": 9.294,
+  "t1": 18.416,
+  "voice": 9.294,
+  "speech": 8.772,
+  "text": "In a modern game, each pixel needs around a thousand calculations. That's two BILLION calculations. For one frame."
+ },
+ {
+  "id": "s02b",
+  "scene": "rewind",
+  "t0": 18.416,
+  "t1": 24.775,
+  "voice": 18.416,
+  "speech": 6.009,
+  "text": "So how much work is that, really? <short pause> To feel it, let's rewind... about eighty years."
+ },
+ {
+  "id": "s03b",
+  "scene": "human",
+  "t0": 24.775,
+  "t1": 41.227,
+  "voice": 24.775,
+  "speech": 16.102,
+  "text": "Back then, computer was a job title. Rooms full of people did math by hand, with pencils and mechanical calculators. An addition took a second or two. A big multiplication, much longer. Call it one calculation every five seconds."
+ },
+ {
+  "id": "s04",
+  "scene": "crowd",
+  "t0": 41.227,
+  "t1": 47.914,
+  "voice": 41.227,
+  "speech": 6.337,
+  "text": "So let's hire them. Let's hire EVERYONE. All eight billion people on Earth, calculating together."
+ },
+ {
+  "id": "s05b",
+  "scene": "slideshow",
+  "t0": 47.914,
+  "t1": 55.501,
+  "voice": 47.914,
+  "speech": 7.237,
+  "text": "We'd finish one frame... in just over a second. <short pause> Your screen needs sixty of them. Every second."
+ },
+ {
+  "id": "s06",
+  "scene": "chip",
+  "t0": 55.501,
+  "t1": 61.518,
+  "voice": 55.501,
+  "speech": 5.667,
+  "text": "And yet, a slab of silicon the size of a postage stamp does it, without breaking a sweat."
+ },
+ {
+  "id": "s07",
+  "scene": "paradox",
+  "t0": 61.518,
+  "t1": 70.783,
+  "voice": 61.518,
+  "speech": 8.915,
+  "text": "Here's the strange part. That chip, the GPU, is built from cores that are slower... and a lot dumber... than the ones in your CPU."
+ },
+ {
+  "id": "s08",
+  "scene": "question",
+  "t0": 70.783,
+  "t1": 78.808,
+  "voice": 70.783,
+  "speech": 5.475,
+  "text": "So how does the dumber chip win? <short pause> To find out, we're going to build one."
+ },
+ {
+  "id": "s09",
+  "scene": "cpuhero",
+  "t0": 78.808,
+  "t1": 87.828,
+  "voice": 78.808,
+  "speech": 8.67,
+  "text": "Let's start with the smart one. A CPU core is a brilliant worker. It follows a recipe, one step at a time, incredibly fast."
+ },
+ {
+  "id": "s10",
+  "scene": "recipe",
+  "t0": 87.828,
+  "t1": 99.796,
+  "voice": 87.828,
+  "speech": 11.619,
+  "text": "Here's a recipe for one pixel of a tiny sunset. Pick a sky color. Inside the sun? Behind a mountain? In the sea? Eight steps, and the pixel is done."
+ },
+ {
+  "id": "s11",
+  "scene": "painting",
+  "t0": 99.796,
+  "t1": 109.509,
+  "voice": 99.796,
+  "speech": 9.363,
+  "text": "Then the next pixel. And the next. Five hundred and seventy six pixels. Four thousand six hundred steps, one after another."
+ },
+ {
+  "id": "s12",
+  "scene": "math",
+  "t0": 109.509,
+  "t1": 120.77,
+  "voice": 109.509,
+  "speech": 10.911,
+  "text": "Now scale that up to a real screen. Two billion steps per frame. A four gigahertz core does about four billion steps a second. That's two frames per second. A slideshow."
+ },
+ {
+  "id": "s13",
+  "scene": "wall",
+  "t0": 120.77,
+  "t1": 135.374,
+  "voice": 120.77,
+  "speech": 14.253,
+  "text": "So, just make it faster? For decades, that's exactly what we did. Then, around two thousand and five, we hit a wall. Power grows roughly with the CUBE of clock speed. Push much past five gigahertz, and the chip cooks itself."
+ },
+ {
+  "id": "s14",
+  "scene": "multicore",
+  "t0": 135.374,
+  "t1": 142.848,
+  "voice": 135.374,
+  "speech": 7.124,
+  "text": "Okay. If one worker can't go faster, hire more workers. Put four cores on the chip, and we're four times faster."
+ },
+ {
+  "id": "s15",
+  "scene": "outofsilicon",
+  "t0": 142.848,
+  "t1": 151.011,
+  "voice": 142.848,
+  "speech": 7.813,
+  "text": "But we need way more than that. And we're out of silicon. So let's look inside a core, and see where all that silicon went."
+ },
+ {
+  "id": "s16",
+  "scene": "xray",
+  "t0": 151.011,
+  "t1": 164.275,
+  "voice": 151.011,
+  "speech": 12.914,
+  "text": "Most of it is brain. Circuits that predict which way your code will go, that shuffle instructions into a faster order, and a private stash of memory. The part that actually does the math, the A L U, is a tiny sliver."
+ },
+ {
+  "id": "s17",
+  "scene": "insight",
+  "t0": 164.275,
+  "t1": 171.691,
+  "voice": 164.275,
+  "speech": 7.066,
+  "text": "But here's the thing. Every pixel runs the SAME recipe. So why does every worker need its own brain?"
+ },
+ {
+  "id": "s18",
+  "scene": "rows",
+  "t0": 171.691,
+  "t1": 179.209,
+  "voice": 171.691,
+  "speech": 7.168,
+  "text": "Let's share one. One control unit reads the recipe, and shouts each step to a whole row of simple math units."
+ },
+ {
+  "id": "s19",
+  "scene": "lanes",
+  "t0": 179.209,
+  "t1": 192.068,
+  "voice": 179.209,
+  "speech": 12.509,
+  "text": "Each unit keeps its own tiny notepad, with its own pixel's position. Same instruction, different data. And when an if doesn't apply to some of them, they just sit that step out. Nobody runs ahead."
+ },
+ {
+  "id": "s20",
+  "scene": "race",
+  "t0": 192.068,
+  "t1": 204.481,
+  "voice": 192.068,
+  "speech": 11.462,
+  "text": "Same silicon as four CPU cores. But now, forty eight math units. Let's race. <long pause> Twenty four times faster than a single core."
+ },
+ {
+  "id": "s21",
+  "scene": "invented",
+  "t0": 204.481,
+  "t1": 212.683,
+  "voice": 204.481,
+  "speech": 7.852,
+  "text": "Congratulations. You just invented the GPU. Engineers call it SIMD. Single instruction, multiple data."
+ },
+ {
+  "id": "s22",
+  "scene": "scale",
+  "t0": 212.683,
+  "t1": 225.09,
+  "voice": 212.683,
+  "speech": 12.058,
+  "text": "A modern graphics card takes this idea, and runs with it. Sixteen thousand math units, marching in lockstep, in groups of thirty two. Around eighty trillion calculations. Every second."
+ },
+ {
+  "id": "s23",
+  "scene": "neural",
+  "t0": 225.09,
+  "t1": 234.905,
+  "voice": 225.09,
+  "speech": 9.464,
+  "text": "And this is why AI runs on GPUs. Inside a neural network, almost all the work is one operation. Matrix multiplication."
+ },
+ {
+  "id": "s24",
+  "scene": "matmul",
+  "t0": 234.905,
+  "t1": 248.11,
+  "voice": 234.905,
+  "speech": 12.855,
+  "text": "Each answer is a row times a column, multiplied and summed. And just like pixels, no answer waits for any other. The CPU walks through them one by one. The GPU does whole rows at once."
+ },
+ {
+  "id": "s25",
+  "scene": "training",
+  "t0": 248.11,
+  "t1": 261.15,
+  "voice": 248.11,
+  "speech": 12.69,
+  "text": "Training a frontier AI model takes around twenty trillion trillion operations. On a single CPU core, that's about sixty million years. On twenty five thousand GPUs... about three weeks."
+ },
+ {
+  "id": "s26",
+  "scene": "chain",
+  "t0": 261.15,
+  "t1": 276.745,
+  "voice": 261.15,
+  "speech": 15.245,
+  "text": "So why do we still have CPUs? Because some problems can't be split up. If every step needs the answer from the step before, sixteen thousand workers can only stand around and wait. For that, you want one brilliant worker."
+ },
+ {
+  "id": "s27",
+  "scene": "team",
+  "t0": 276.745,
+  "t1": 282.431,
+  "voice": 276.745,
+  "speech": 5.336,
+  "text": "Your computer needs both. The CPU is the manager. The GPU is the army."
+ },
+ {
+  "id": "s28",
+  "scene": "cost",
+  "t0": 282.431,
+  "t1": 298.443,
+  "voice": 282.431,
+  "speech": 15.662,
+  "text": "And that army isn't cheap. A top AI GPU costs as much as a car. Eighty billion transistors on one slab, printed with extreme ultraviolet light, made by blasting droplets of molten tin with a laser, fifty thousand times a second."
+ },
+ {
+  "id": "r1",
+  "scene": "reflect",
+  "t0": 298.443,
+  "t1": 302.862,
+  "voice": 298.443,
+  "speech": 3.668,
+  "text": "Before we go... it's worth looking back, at how far we've come."
+ },
+ {
+  "id": "g1",
+  "scene": "mountain",
+  "t0": 302.862,
+  "t1": 311.862,
+  "voice": 302.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g2",
+  "scene": "river",
+  "t0": 311.862,
+  "t1": 319.862,
+  "voice": 311.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g3",
+  "scene": "dino",
+  "t0": 319.862,
+  "t1": 330.862,
+  "voice": 319.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g4",
+  "scene": "ages",
+  "t0": 330.862,
+  "t1": 343.862,
+  "voice": 330.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g5",
+  "scene": "humans",
+  "t0": 343.862,
+  "t1": 352.862,
+  "voice": 343.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g6",
+  "scene": "crystal2",
+  "t0": 352.862,
+  "t1": 360.862,
+  "voice": 352.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g7",
+  "scene": "burn",
+  "t0": 360.862,
+  "t1": 367.862,
+  "voice": 360.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g8",
+  "scene": "current2",
+  "t0": 367.862,
+  "t1": 374.862,
+  "voice": 367.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g9",
+  "scene": "phone",
+  "t0": 374.862,
+  "t1": 386.862,
+  "voice": 374.862,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g10",
+  "scene": "endcard",
+  "t0": 386.862,
+  "t1": 392.862,
+  "voice": 386.862,
+  "speech": 0.0,
+  "text": ""
+ }
+]

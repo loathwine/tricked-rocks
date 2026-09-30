@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>EP01 hook · scene</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Silkscreen&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#000}canvas{display:block;width:100vw;height:auto}</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../../assets/js/pixel.js"></script>
+<script>
+/* Deterministic hook scene: window.renderFrame(t) draws the frame at t seconds.
+   TIMING is filled in from the measured voice clips (see render.mjs). */
+const TIMING = window.TIMING || { a1: 0.4, a1e: 3.55, a2: 4.05, a2e: 7.13, a3: 7.6, a3e: 10.26, end: 11.2 };
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+const W = 1920, H = 1080;
+const C = { bg: "#07060f", ink: "#ecebff", muted: "#9a95c4", cpu: "#ffab40", gpu: "#3df5c4", gold: "#ffe066", hot: "#ff4d8d", sky: "#7b86ff", line: "#2d2856" };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+const easeOut = (k) => 1 - Math.pow(1 - k, 3);
+const easeInOut = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+const lerp = (a, b, k) => a + (b - a) * k;
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+// ---------- static random tables ----------
+const STARS = Array.from({ length: 140 }, () => ({ x: rnd() * W, y: rnd() * H, s: rnd() < 0.2 ? 4 : 2, p: rnd() * 6 }));
+const SPR = PX.SPRITES.cpu;
+const SPR_CELLS = [];
+SPR.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== ".") SPR_CELLS.push({ x, y, ch, r: rnd() }); }));
+const BRAIN = ["branch prediction", "out-of-order execution", "big private cache", "speculation", "register renaming"];
+
+function text(str, x, y, size, color, align = "center", font = "Silkscreen", alpha = 1) {
+  ctx.globalAlpha = alpha;
+  ctx.font = `${size}px ${font}`;
+  ctx.textAlign = align;
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = color;
+  ctx.fillText(str, x, y);
+  ctx.globalAlpha = 1;
+}
+function typed(str, k) { return str.slice(0, Math.round(str.length * clamp(k, 0, 1))); }
+
+function background(t, dim = 1) {
+  ctx.fillStyle = C.bg;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = `rgba(123,134,255,${0.05 * dim})`;
+  for (let y = 12; y < H; y += 24) for (let x = 12; x < W; x += 24) ctx.fillRect(x, y, 2, 2);
+  STARS.forEach((s) => {
+    const tw = 0.35 + 0.65 * Math.max(0, Math.sin(t * 1.3 + s.p));
+    ctx.fillStyle = `rgba(236,235,255,${0.35 * tw * dim})`;
+    ctx.fillRect(Math.round(s.x), Math.round(s.y), s.s, s.s);
+  });
+}
+
+// The CPU core sprite, assembled pixel by pixel (k: 0..1), centred at cx, cy.
+function cpuCore(t, cx, cy, S, k, glow) {
+  const ox = Math.round(cx - 8 * S), oy = Math.round(cy - 8 * S);
+  if (glow > 0) {
+    const g = ctx.createRadialGradient(cx, cy, S * 2, cx, cy, S * 16);
+    g.addColorStop(0, `rgba(255,171,64,${0.32 * glow})`);
+    g.addColorStop(1, "rgba(255,171,64,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(cx - S * 16, cy - S * 16, S * 32, S * 32);
+    // circuit traces with travelling pulses
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2 + 0.26;
+      const pulse = (t * 0.8 + i * 0.37) % 1;
+      for (let r = 9; r < 22; r += 0.5) {
+        const x = Math.round((cx + Math.cos(a) * r * S) / S) * S, y = Math.round((cy + Math.sin(a) * r * S * 0.85) / S) * S;
+        const on = Math.abs((r - 9) / 13 - pulse) < 0.06;
+        ctx.fillStyle = on ? `rgba(255,224,102,${glow})` : `rgba(45,40,86,${0.8 * glow})`;
+        ctx.fillRect(x, y, S * 0.5, S * 0.5);
+      }
+    }
+  }
+  SPR_CELLS.forEach((c) => {
+    if (c.r > k) return;
+    const fresh = k - c.r < 0.05;
+    ctx.fillStyle = fresh ? "#fff8e0" : PX.PAL_CPU[c.ch];
+    ctx.fillRect(ox + c.x * S, oy + c.y * S, S, S);
+  });
+}
+
+// A GPU core: one small, plain math unit.
+function gpuCore(cx, cy, S, pop) {
+  const s = S * (pop < 1 ? 1 + Math.sin(pop * Math.PI) * 0.6 : 1) * clamp(pop * 3, 0, 1);
+  if (s <= 0) return;
+  ctx.fillStyle = C.gpu;
+  ctx.fillRect(Math.round(cx - s), Math.round(cy - s), Math.round(2 * s), Math.round(2 * s));
+  ctx.fillStyle = "rgba(11,10,23,.35)";
+  ctx.fillRect(Math.round(cx - s), Math.round(cy + s * 0.6), Math.round(2 * s), Math.round(s * 0.4));
+  ctx.fillStyle = "rgba(255,255,255,.35)";
+  ctx.fillRect(Math.round(cx - s), Math.round(cy - s), Math.round(2 * s), Math.round(s * 0.25));
+}
+
+// The swarm: n GPU cores in a grid, flashing together in groups of 32 (lockstep).
+function swarm(t, n, x0, y0, w, h) {
+  const cols = Math.max(1, Math.ceil(Math.sqrt((n * w) / h)));
+  const rows = Math.ceil(n / cols);
+  const cell = Math.min(w / cols, h / rows, 66); // never bigger than the lone GPU core we started with
+  const d = Math.max(2, Math.floor(cell * 0.78));
+  const gx = x0 + (w - cols * cell) / 2, gy = y0 + (h - rows * cell) / 2;
+  for (let i = 0; i < n; i++) {
+    const c = i % cols, r = Math.floor(i / cols);
+    const group = Math.floor(i / 32);
+    const lit = Math.sin(t * 9 - group * 0.07) > 0.55;
+    ctx.fillStyle = lit ? "#c9fff1" : C.gpu;
+    ctx.fillRect(Math.round(gx + c * cell), Math.round(gy + r * cell), d, d);
+  }
+}
+
+window.renderFrame = function (t) {
+  const T = TIMING;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1;
+
+  // camera shake on the "HUNDRED" beat
+  const hit = T.a3 + (T.a3e - T.a3) * 0.42;
+  const shake = t > hit && t < hit + 0.35 ? (1 - (t - hit) / 0.35) * 10 : 0;
+  if (shake) ctx.translate(Math.sin(t * 90) * shake, Math.cos(t * 77) * shake);
+
+  // ---------------- title card ----------------
+  if (t >= T.a3e + 0.05) {
+    background(t, 0.5);
+    const k = seg(t, T.a3e + 0.05, T.a3e + 0.35);
+    text("TRICKED", W / 2 - 150, H / 2 - 20, 96, C.ink, "center", "Silkscreen", k);
+    text("ROCKS", W / 2 + 250, H / 2 - 20, 96, C.gpu, "center", "Silkscreen", k);
+    text("EP 01 · THE PARALLEL MACHINE", W / 2, H / 2 + 80, 32, C.muted, "center", "Silkscreen", seg(t, T.a3e + 0.25, T.a3e + 0.55));
+    return;
+  }
+
+  background(t);
+
+  // ---------------- layout over time ----------------
+  const move = easeInOut(seg(t, T.a1e + 0.1, T.a2 + 0.2));          // CPU slides left for the comparison
+  const shrink = easeInOut(seg(t, T.a3 - 0.3, T.a3 + 0.5));          // CPU retreats to a corner for the swarm
+  const cpuX = lerp(lerp(W / 2, 600, move), 230, shrink);
+  const cpuY = lerp(H / 2 - 30, 880, shrink);
+  const cpuS = lerp(lerp(22 * (1 + 0.05 * seg(t, 0, T.a1e)), 17, move), 6, shrink);
+  const build = easeOut(seg(t, 0.15, 1.5));
+  cpuCore(t, cpuX, cpuY, cpuS, build, (1 - shrink * 0.8) * seg(t, 0.4, 1.4));
+
+  // smart-sounding parts drifting around the CPU while it's the hero
+  if (t < T.a2 + 0.3) {
+    BRAIN.forEach((b, i) => {
+      const a = seg(t, 1.3 + i * 0.28, 1.8 + i * 0.28) * (1 - seg(t, T.a1e - 0.2, T.a1e + 0.3));
+      if (a <= 0) return;
+      // spread over the upper arc and the sides, clear of the label below the chip
+      const ang = [-2.55, -1.95, -1.2, -0.45, 0.15][i], R = 330 + (i % 2) * 30;
+      text(b, cpuX + Math.cos(ang) * R * 1.35, cpuY + Math.sin(ang) * R * 0.75 + Math.sin(t * 1.4 + i) * 6, 26, C.muted, "center", "JetBrains Mono", a * 0.9);
+    });
+  }
+  const labelA = seg(t, 1.0, 1.4) * (1 - shrink);
+  text("CPU CORE", cpuX, cpuY + cpuS * 10.5, 40, C.cpu, "center", "Silkscreen", labelA);
+  if (shrink > 0) text("1 CPU CORE", cpuX, cpuY + 95, 26, C.cpu, "center", "Silkscreen", shrink);
+
+  // ---------------- the GPU core ----------------
+  const gpuT0 = T.a2 + 0.05;
+  if (t >= gpuT0 && t < T.a3 - 0.2) {
+    const gx = 1320, gy = H / 2 - 30;
+    gpuCore(gx, gy, 26, seg(t, gpuT0, gpuT0 + 0.35));
+    text("GPU CORE", gx, gy + 110, 40, C.gpu, "center", "Silkscreen", seg(t, gpuT0 + 0.2, gpuT0 + 0.5));
+    // "slower": clock speeds
+    const kS = seg(t, T.a2 + 0.9, T.a2 + 1.4);
+    if (kS > 0) {
+      text(typed("~5.5 GHz", kS), 600, H / 2 + 225, 34, C.ink, "center", "JetBrains Mono");
+      text(typed("~2.5 GHz", kS), gx, H / 2 + 150, 34, C.ink, "center", "JetBrains Mono");
+    }
+    // "WAY dumber": a confused little question mark
+    const kD = seg(t, T.a2 + 1.9, T.a2 + 2.2);
+    if (kD > 0) text("?", gx + 5, gy - 90 + Math.sin(t * 7) * 8, 72, C.gold, "center", "Silkscreen", kD);
+  }
+
+  // ---------------- the swarm: 1 → 16,384 ----------------
+  if (t >= T.a3 - 0.2) {
+    const k = seg(t, T.a3 - 0.1, hit);
+    const doublings = Math.floor(Math.pow(k, 1.6) * 14 + 1e-9);
+    const n = Math.pow(2, clamp(doublings, 0, 14));
+    swarm(t, n, 480, 170, 1380, 760);
+    text(`× ${n.toLocaleString("en-US")}`, 1860, 100, 56, C.gpu, "right", "Silkscreen");
+    text("GPU CORES", 1860, 150, 24, C.muted, "right", "Silkscreen");
+    text(typed("SO WHY IS IT", seg(t, T.a3, T.a3 + 0.6)), 480, 100, 48, C.ink, "left", "Silkscreen");
+  }
+  // the question lands on "HUNDRED"
+  if (t >= hit) {
+    const k = easeOut(seg(t, hit, hit + 0.25));
+    ctx.fillStyle = `rgba(7,6,15,${0.72 * k})`;
+    ctx.fillRect(480, H / 2 - 150, 1380, 260);
+    const s = lerp(1.4, 1, k);
+    ctx.save();
+    ctx.translate(1170, H / 2 - 20);
+    ctx.scale(s, s);
+    text("100× FASTER?", 0, 0, 150, C.gold, "center", "Silkscreen", k);
+    ctx.restore();
+    if (t < hit + 0.08) { ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.fillRect(-20, -20, W + 40, H + 40); }
+  }
+
+  // letterbox fade in
+  const fin = seg(t, 0, 0.35);
+  if (fin < 1) { ctx.fillStyle = `rgba(0,0,0,${1 - fin})`; ctx.fillRect(-20, -20, W + 40, H + 40); }
+};
+
+window.sceneReady = document.fonts.load("40px Silkscreen").then(() => document.fonts.load("26px 'JetBrains Mono'")).then(() => { renderFrame(0); return true; });
+</script>
+</body>
+</html>

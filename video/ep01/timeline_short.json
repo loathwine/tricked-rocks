@@ -1,0 +1,102 @@
+[
+ {
+  "id": "g0",
+  "scene": "shorttitle",
+  "t0": 0.0,
+  "t1": 4.1,
+  "voice": 0.6,
+  "speech": 0.6,
+  "text": ""
+ },
+ {
+  "id": "g1",
+  "scene": "mountain",
+  "t0": 4.1,
+  "t1": 12.1,
+  "voice": 4.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g2",
+  "scene": "river",
+  "t0": 12.1,
+  "t1": 20.1,
+  "voice": 12.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g3",
+  "scene": "dino",
+  "t0": 20.1,
+  "t1": 30.1,
+  "voice": 20.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g4",
+  "scene": "ages",
+  "t0": 30.1,
+  "t1": 44.1,
+  "voice": 30.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g5",
+  "scene": "humans",
+  "t0": 44.1,
+  "t1": 53.1,
+  "voice": 44.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g6",
+  "scene": "crystal2",
+  "t0": 53.1,
+  "t1": 61.1,
+  "voice": 53.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g7",
+  "scene": "burn",
+  "t0": 61.1,
+  "t1": 68.1,
+  "voice": 61.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g8",
+  "scene": "current2",
+  "t0": 68.1,
+  "t1": 76.1,
+  "voice": 68.1,
+  "speech": 0.0,
+  "text": ""
+ },
+ {
+  "id": "g9",
+  "scene": "phone",
+  "t0": 76.1,
+  "t1": 86.1,
+  "voice": 76.1,
+  "speech": 0.0,
+  "text": "",
+  "mirror": false
+ },
+ {
+  "id": "g10",
+  "scene": "endcard",
+  "t0": 86.1,
+  "t1": 92.1,
+  "voice": 86.1,
+  "speech": 0.0,
+  "text": ""
+ }
+]

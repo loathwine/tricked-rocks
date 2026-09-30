@@ -1,0 +1,203 @@
+[
+ {
+  "id": "s01",
+  "scene": "screen",
+  "text": "Right now, you're looking at a screen. It has about two million pixels... and it redraws every single one of them, sixty times a second."
+ },
+ {
+  "id": "s02",
+  "scene": "calc",
+  "text": "In a modern game, each pixel needs around a thousand calculations. That's two BILLION calculations. For one frame."
+ },
+ {
+  "id": "s02b",
+  "scene": "rewind",
+  "text": "So how much work is that, really? <short pause> To feel it, let's rewind... about eighty years."
+ },
+ {
+  "id": "s03b",
+  "scene": "human",
+  "text": "Back then, computer was a job title. Rooms full of people did math by hand, with pencils and mechanical calculators. An addition took a second or two. A big multiplication, much longer. Call it one calculation every five seconds."
+ },
+ {
+  "id": "s04",
+  "scene": "crowd",
+  "text": "So let's hire them. Let's hire EVERYONE. All eight billion people on Earth, calculating together."
+ },
+ {
+  "id": "s05b",
+  "scene": "slideshow",
+  "text": "We'd finish one frame... in just over a second. <short pause> Your screen needs sixty of them. Every second."
+ },
+ {
+  "id": "s06",
+  "scene": "chip",
+  "text": "And yet, a slab of silicon the size of a postage stamp does it, without breaking a sweat."
+ },
+ {
+  "id": "s07",
+  "scene": "paradox",
+  "text": "Here's the strange part. That chip, the GPU, is built from cores that are slower... and a lot dumber... than the ones in your CPU."
+ },
+ {
+  "id": "s08",
+  "scene": "question",
+  "text": "So how does the dumber chip win? <short pause> To find out, we're going to build one.",
+  "pad": 2.2
+ },
+ {
+  "id": "s09",
+  "scene": "cpuhero",
+  "text": "Let's start with the smart one. A CPU core is a brilliant worker. It follows a recipe, one step at a time, incredibly fast."
+ },
+ {
+  "id": "s10",
+  "scene": "recipe",
+  "text": "Here's a recipe for one pixel of a tiny sunset. Pick a sky color. Inside the sun? Behind a mountain? In the sea? Eight steps, and the pixel is done."
+ },
+ {
+  "id": "s11",
+  "scene": "painting",
+  "text": "Then the next pixel. And the next. Five hundred and seventy six pixels. Four thousand six hundred steps, one after another."
+ },
+ {
+  "id": "s12",
+  "scene": "math",
+  "text": "Now scale that up to a real screen. Two billion steps per frame. A four gigahertz core does about four billion steps a second. That's two frames per second. A slideshow."
+ },
+ {
+  "id": "s13",
+  "scene": "wall",
+  "text": "So, just make it faster? For decades, that's exactly what we did. Then, around two thousand and five, we hit a wall. Power grows roughly with the CUBE of clock speed. Push much past six gigahertz, and the chip cooks itself."
+ },
+ {
+  "id": "s14",
+  "scene": "multicore",
+  "text": "Okay. If one worker can't go faster, hire more workers. Put four cores on the chip, and we're four times faster."
+ },
+ {
+  "id": "s15",
+  "scene": "outofsilicon",
+  "text": "But we need way more than that. And we're out of silicon. So let's look inside a core, and see where all that silicon went."
+ },
+ {
+  "id": "s16",
+  "scene": "xray",
+  "text": "Most of it is brain. Circuits that predict which way your code will go, that shuffle instructions into a faster order, and a private stash of memory. The part that actually does the math, the A L U, is a tiny sliver."
+ },
+ {
+  "id": "s17",
+  "scene": "insight",
+  "text": "But here's the thing. Every pixel runs the SAME recipe. So why does every worker need its own brain?"
+ },
+ {
+  "id": "s18",
+  "scene": "rows",
+  "text": "Let's share one. One control unit reads the recipe, and shouts each step to a whole row of simple math units."
+ },
+ {
+  "id": "s19",
+  "scene": "lanes",
+  "text": "Each unit keeps its own tiny notepad, with its own pixel's position. Same instruction, different data. And when an if doesn't apply to some of them, they just sit that step out. Nobody runs ahead."
+ },
+ {
+  "id": "s20",
+  "scene": "race",
+  "text": "Same silicon as four CPU cores. But now, forty eight math units. Let's race. <long pause> Twenty four times faster than a single core.",
+  "pad": 0.6
+ },
+ {
+  "id": "s21",
+  "scene": "invented",
+  "text": "Congratulations. You just invented the GPU. Engineers call it SIMD. Single instruction, multiple data."
+ },
+ {
+  "id": "s22",
+  "scene": "scale",
+  "text": "A modern graphics card takes this idea, and runs with it. Sixteen thousand math units, marching in lockstep, in groups of thirty two. Around eighty trillion calculations. Every second."
+ },
+ {
+  "id": "s23",
+  "scene": "neural",
+  "text": "And this is why AI runs on GPUs. Inside a neural network, almost all the work is one operation. Matrix multiplication."
+ },
+ {
+  "id": "s24",
+  "scene": "matmul",
+  "text": "Each answer is a row times a column, multiplied and summed. And just like pixels, no answer waits for any other. The CPU walks through them one by one. The GPU does whole rows at once."
+ },
+ {
+  "id": "s25",
+  "scene": "training",
+  "text": "Training a GPT-4-class AI model takes around twenty trillion trillion operations. On a single CPU core, that's about sixty million years. On twenty five thousand GPUs... about three weeks."
+ },
+ {
+  "id": "s26",
+  "scene": "chain",
+  "text": "So why do we still have CPUs? Because some problems can't be split up. If every step needs the answer from the step before, sixteen thousand workers can only stand around and wait. For that, you want one brilliant worker."
+ },
+ {
+  "id": "s27",
+  "scene": "team",
+  "text": "Your computer needs both. The CPU is the manager. The GPU is the army."
+ },
+ {
+  "id": "s28",
+  "scene": "cost",
+  "text": "And that army isn't cheap. A flagship AI GPU like the H100 costs as much as a car. Eighty billion transistors on one slab, printed with extreme ultraviolet light, made by blasting droplets of molten tin with a laser, fifty thousand times a second."
+ },
+ {
+  "id": "r1",
+  "scene": "reflect",
+  "text": "Before we go... it's worth looking back, at how far we've come.",
+  "pad": 0.4
+ },
+ {
+  "id": "p1",
+  "scene": "beach",
+  "style": "Slow, reverent and quietly awed, like the closing lines of a documentary. Warm and intimate, letting each phrase breathe. Not theatrical.",
+  "pad": 0.6,
+  "text": "Once, it was sand. Grains on a beach, warmed by a sun that never knew our names."
+ },
+ {
+  "id": "p2",
+  "scene": "atoms",
+  "style": "Slow, reverent and quietly awed, like the closing lines of a documentary. Warm and intimate, letting each phrase breathe. Not theatrical.",
+  "pad": 0.6,
+  "text": "We melted it, and made it pure. So pure, that in a billion atoms, only one is anything but silicon."
+ },
+ {
+  "id": "p3",
+  "scene": "crystal",
+  "style": "Slow, reverent and quietly awed, like the closing lines of a documentary. Warm and intimate, letting each phrase breathe. Not theatrical.",
+  "pad": 0.6,
+  "text": "We grew it into a single, flawless crystal... and sliced it into discs, thinner than a coin."
+ },
+ {
+  "id": "p4",
+  "scene": "light",
+  "style": "Slow, reverent and quietly awed, like the closing lines of a documentary. Warm and intimate, letting each phrase breathe. Not theatrical.",
+  "pad": 0.6,
+  "text": "Then, with light itself, we drew on it. Eighty billion tiny switches."
+ },
+ {
+  "id": "p5",
+  "scene": "current",
+  "style": "Warm, bright and hopeful, a lift of quiet wonder and delight, like sharing a beautiful secret. Gentle pace, light and airy, not deep or dark.",
+  "pad": 0.6,
+  "text": "We sent a current through it... and the sand began to count. Trillions of times a second."
+ },
+ {
+  "id": "p6",
+  "scene": "tricked",
+  "style": "Slow, reverent and quietly awed, like the closing lines of a documentary. Warm and intimate, letting each phrase breathe. Not theatrical.",
+  "pad": 1.6,
+  "text": "We tricked rocks... into thinking."
+ },
+ {
+  "id": "s32",
+  "scene": "cta",
+  "text": "Want to feel it for yourself? Build your own chip and race a CPU, in the interactive lesson linked below. Next time, we go all the way down, to a single switch.",
+  "pad": 3.0
+ }
+]

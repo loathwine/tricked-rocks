@@ -1,0 +1,58 @@
+[
+ {
+  "id": "g0",
+  "scene": "shorttitle",
+  "silent": 3.5
+ },
+ {
+  "id": "g1",
+  "scene": "mountain",
+  "silent": 8
+ },
+ {
+  "id": "g2",
+  "scene": "river",
+  "silent": 8
+ },
+ {
+  "id": "g3",
+  "scene": "dino",
+  "silent": 10
+ },
+ {
+  "id": "g4",
+  "scene": "ages",
+  "silent": 14
+ },
+ {
+  "id": "g5",
+  "scene": "humans",
+  "silent": 9
+ },
+ {
+  "id": "g6",
+  "scene": "crystal2",
+  "silent": 8
+ },
+ {
+  "id": "g7",
+  "scene": "burn",
+  "silent": 7
+ },
+ {
+  "id": "g8",
+  "scene": "current2",
+  "silent": 8
+ },
+ {
+  "id": "g9",
+  "scene": "phone",
+  "silent": 10,
+  "mirror": false
+ },
+ {
+  "id": "g10",
+  "scene": "endcard",
+  "silent": 6
+ }
+]

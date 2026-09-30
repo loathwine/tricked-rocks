@@ -1,0 +1,41 @@
+{
+  "main": {
+    "file": "out/ep01-the-parallel-machine.mp4",
+    "captions": "out/captions.srt",
+    "title": "How a graphics card works, built from scratch",
+    "description": "Build your own chip and race a CPU in the interactive lesson: https://loathwine.github.io/tricked-rocks/\n\nA screen redraws millions of pixels, sixty times a second. By hand, all of humanity working together couldn't keep up. A graphics card does it without breaking a sweat, using cores that are slower and dumber than your CPU's. In this video we build one from scratch to find out how.\n\n0:00 How much work is one frame?\n1:18 One brilliant worker: the CPU\n2:17 Hire more workers\n2:53 Share one brain: inventing the GPU\n3:47 Why AI runs on GPUs\n4:25 Why we still need CPUs\n4:46 Why GPUs cost as much as a car\n5:04 From sand to thinking\n\nNumbers are rounded estimates, chosen to show the scale rather than exact figures.\nNarration: AI voice (Gemini TTS). Visuals and sound are generated in code.\n\nTricked Rocks · EP 01 · The Parallel Machine\n\n#GPU #ComputerScience #HowItWorks",
+    "tags": [
+      "GPU",
+      "CPU",
+      "how GPUs work",
+      "parallel computing",
+      "SIMD",
+      "computer science",
+      "AI hardware",
+      "explainer",
+      "pixel art",
+      "Tricked Rocks"
+    ],
+    "categoryId": "27",
+    "playlist": "Tricked Rocks",
+    "privacy": "private",
+    "thumbnail": "thumbs/thumb_F.jpg"
+  },
+  "short": {
+    "file": "out_short/ep01-short-where-chips-come-from.mp4",
+    "title": "Where does a chip come from? From granite to your phone",
+    "description": "300 million years, from a crumbling mountain to the screen in your hand.\n\nFull episode and interactive lesson: https://loathwine.github.io/tricked-rocks/\n\nTricked Rocks\n\n#Silicon #HowItsMade #Semiconductors",
+    "tags": [
+      "silicon",
+      "how chips are made",
+      "sand to silicon",
+      "semiconductors",
+      "pixel art",
+      "Tricked Rocks"
+    ],
+    "categoryId": "27",
+    "playlist": "Tricked Rocks",
+    "privacy": "private"
+  },
+  "notes": "categoryId 27 = Education. Upload as private first, check on YouTube, then switch to public. The short is 16:9, so YouTube treats it as a normal video, not a Short."
+}
