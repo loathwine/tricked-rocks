@@ -1,0 +1,139 @@
+[
+ {
+  "id": "h1",
+  "scene": "eniac",
+  "text": "In 1945, the most powerful computer on Earth weighed twenty seven tonnes. It filled a room, drew enough power for a small street, and one of its parts burned out every couple of days."
+ },
+ {
+  "id": "h2",
+  "scene": "phone",
+  "text": "Today, something hundreds of millions of times more powerful sits in your pocket, and runs all day on a battery."
+ },
+ {
+  "id": "h3",
+  "scene": "switches",
+  "text": "Both are built from the same thing: switches. Your phone has about twenty billion of them. And not one of them moves."
+ },
+ {
+  "id": "h4",
+  "scene": "question",
+  "text": "They're made of silicon, the main ingredient of sand. So how do you make a switch... out of a rock?",
+  "pad": 2.0
+ },
+ {
+  "id": "e1",
+  "scene": "wire",
+  "text": "First, what's actually flowing. A copper wire is already packed with free electrons, tiny negative particles that can drift between the atoms."
+ },
+ {
+  "id": "e2",
+  "scene": "pulse",
+  "text": "Close a switch, and they don't race from one end to the other. Each one just shoves its neighbour. That push travels at a large fraction of the speed of light. The electrons themselves? About a tenth of a millimetre per second."
+ },
+ {
+  "id": "e3",
+  "scene": "battery",
+  "text": "The push comes from the battery. Chemical reactions leave extra electrons at its minus end, and a shortage at its plus end. Charges push and pull on each other, so that imbalance shoves every free electron around the loop. The bigger the imbalance, the harder the push. That's voltage."
+ },
+ {
+  "id": "e4",
+  "scene": "voltage",
+  "text": "You can think of voltage as the energy each electron picks up from the battery on one trip around the loop. Double the voltage, and every electron carries twice as much. In the bulb, the electrons crash into the atoms of a thin wire, and hand that energy over as heat and light."
+ },
+ {
+  "id": "d1",
+  "scene": "andor",
+  "text": "Notice something. Current only flows if the loop is complete. Break it anywhere, and everything stops. So what if we break it on purpose? That's a switch: a gap you can close. Put two of them one after the other, and the light only comes on when A and B are both closed. Side by side, it comes on for A or B. Switches can make decisions."
+ },
+ {
+  "id": "d2",
+  "scene": "fingers",
+  "text": "There's one problem. Something has to flip them. And a computer can't wait for a finger."
+ },
+ {
+  "id": "r1",
+  "scene": "relay",
+  "text": "So engineers built computers from switches that electricity could flip. Run a current through a coil of wire, and it becomes a magnet. The magnet pulls a metal lever, and closes a second circuit."
+ },
+ {
+  "id": "r2",
+  "scene": "relaychain",
+  "text": "That's a relay: a switch flipped by electricity instead of a finger. This early kind used a magnet and a moving lever. One relay can flip the next, and the next. In 1941, Konrad Zuse built the first working programmable, fully automatic computer out of about two thousand six hundred of them. It managed roughly five steps a second."
+ },
+ {
+  "id": "r3",
+  "scene": "moth",
+  "text": "But relays are little machines, and machines have problems. They click, they wear out, and sometimes they catch insects. In 1947, a moth jammed one in a Harvard computer. The operators taped it into their logbook as the first actual case of a bug being found."
+ },
+ {
+  "id": "t1",
+  "scene": "tube",
+  "text": "The next switch had no moving parts. Heat a wire until it glows, and electrons boil off it. Inside a glass tube with the air pumped out, they fly to a positive metal plate. Current, through empty space."
+ },
+ {
+  "id": "t2",
+  "scene": "grid",
+  "text": "Between them sits a fine wire mesh, the grid. Make it a few volts negative, and it turns the electrons back. Set it to zero, and they fly straight through. Because the grid sits so close to the filament, a few volts can control a hundred."
+ },
+ {
+  "id": "t3",
+  "scene": "eniac2",
+  "text": "That's the vacuum tube. About ten thousand times faster than a relay. ENIAC used seventeen thousand of them. But every filament had to glow hot, all the time."
+ },
+ {
+  "id": "s1",
+  "scene": "lattice",
+  "text": "So could you build a switch with no moving parts, and no heat? The answer came from a crystal. A silicon atom has four outer electrons, and shares each one with a neighbour. Every electron is locked in a bond, so nothing is free to move. Pure silicon barely conducts."
+ },
+ {
+  "id": "s2",
+  "scene": "doping",
+  "text": "Now swap in a phosphorus atom. It has five outer electrons. Four fit into bonds, and one is left over, free to roam. That's n-type silicon. Swap in boron instead, with only three, and you leave a gap, a hole, that moves like a positive charge. That's p-type."
+ },
+ {
+  "id": "x1",
+  "scene": "fetbuild",
+  "text": "Here's the trick. Take p-type silicon, and add two islands of n-type: the source, where electrons come in from the battery, and the drain, where they leave again. Cover the space between them with a thin layer of glass, and put a metal gate on top."
+ },
+ {
+  "id": "x2",
+  "scene": "barrier",
+  "text": "At each border, a few electrons cross over and fill holes. That leaves fixed charges behind, which push the rest back. Two barriers, back to back. No current can get through."
+ },
+ {
+  "id": "x3",
+  "scene": "channel",
+  "text": "Now put a positive voltage on the gate. It pulls electrons up against the glass, and pushes the holes away. Past about half a volt, the electrons join up into a channel, a bridge from source to drain. The switch is on."
+ },
+ {
+  "id": "x4",
+  "scene": "fetoff",
+  "text": "Take the voltage away, and the bridge dissolves. No moving parts. Only electrons move. That's a transistor, and almost every switch in your devices is one."
+ },
+ {
+  "id": "w1",
+  "scene": "race",
+  "text": "The first transistor, in 1947, wasn't even faster than a good tube. It won because it needed no heater, never wore out, and could be made tiny. And from around 1960, many could be printed together on one piece of silicon."
+ },
+ {
+  "id": "w2",
+  "scene": "shrink",
+  "text": "Every time they shrank, they got faster and cheaper. Today's transistors are smaller than a virus, and flip in about ten trillionths of a second. From two thousand three hundred on a chip in 1971, to nearly a hundred billion on a single chip today."
+ },
+ {
+  "id": "f1",
+  "scene": "chainfet",
+  "text": "And in a chip, nobody touches the gates. Each one is wired to the output of another transistor. Switches, flipping switches, billions of times a second."
+ },
+ {
+  "id": "f2",
+  "scene": "sandglow",
+  "text": "We took the main ingredient of sand, and turned it into billions of tiny machines, with no moving parts."
+ },
+ {
+  "id": "f3",
+  "scene": "cta",
+  "text": "Next time, we wire these switches into gates, and teach them to count. Until then, build your own transistor, in the interactive lesson linked below.",
+  "pad": 3.0
+ }
+]

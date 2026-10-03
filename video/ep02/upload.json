@@ -1,0 +1,28 @@
+{
+  "main": {
+    "file": "out/ep02-the-switch.mp4",
+    "captions": "out/captions.srt",
+    "title": "How do you make a switch out of a rock?",
+    "description": "Build your own transistor in the interactive lesson: https://loathwine.github.io/tricked-rocks/lessons/02-the-switch/\n\nYour phone has about twenty billion switches, and not one of them moves. They're made of silicon, the main ingredient of sand. In this video we go from electricity itself, through relays and vacuum tubes, to the transistor: a switch made of a rock.\n\n0:00 A switch out of a rock?\n0:38 What is electricity, really?\n1:38 Switches that decide\n2:07 Relays: switches flipped by electricity\n3:02 Vacuum tubes: no moving parts\n3:45 Silicon, and doping it\n4:24 Building a transistor\n5:17 Why the transistor won\n5:50 Switches flipping switches\n\nNumbers are rounded, chosen to show the scale rather than exact figures.\nNarration: AI voice (Gemini TTS). Visuals and sound are generated in code.\n\nTricked Rocks · EP 02 · The Switch\n\n#Transistor #ComputerScience #HowItWorks",
+    "tags": [
+      "transistor",
+      "how transistors work",
+      "MOSFET",
+      "semiconductors",
+      "silicon",
+      "doping",
+      "vacuum tube",
+      "relay",
+      "electricity",
+      "computer science",
+      "explainer",
+      "pixel art",
+      "Tricked Rocks"
+    ],
+    "categoryId": "27",
+    "playlist": "Tricked Rocks",
+    "privacy": "private",
+    "thumbnail": "thumbs/thumb_B.jpg"
+  },
+  "notes": "categoryId 27 = Education. Uploaded private, checked, then switched to public."
+}
