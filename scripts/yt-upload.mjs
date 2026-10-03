@@ -18,6 +18,9 @@
 //   node scripts/yt-upload.mjs video/ep01/upload.json main --dry-run
 //   node scripts/yt-upload.mjs video/ep01/upload.json main
 //   node scripts/yt-upload.mjs video/ep01/upload.json short
+//   node scripts/yt-upload.mjs video/ep02/upload.json main --thumbnail   (set the thumbnail of an uploaded entry)
+//   node scripts/yt-upload.mjs video/ep02/upload.json main --public      (switch an uploaded entry to public)
+//   New uploads also set entry.thumbnail when it's given.
 //
 // Notes carried over from craftplan:
 // - OAuth loopback port comes from YT_OAUTH_PORT (default 9878 here; craftplan uses 9877, Blender MCP holds 9876).
@@ -45,6 +48,7 @@ const PORT = +(process.env.YT_OAUTH_PORT || 9878);
 const fail = (msg) => { console.error(`[yt] ${msg}`); process.exit(1); };
 const [manifestArg, key] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const DRY = process.argv.includes("--dry-run");
+const SET_THUMB = process.argv.includes("--thumbnail"), MAKE_PUBLIC = process.argv.includes("--public");
 if (!manifestArg || !key) fail("usage: node scripts/yt-upload.mjs <upload.json> <entry> [--dry-run]");
 const MANIFEST = resolve(manifestArg), BASE = dirname(MANIFEST);
 const entry = JSON.parse(readFileSync(MANIFEST, "utf-8"))[key] || fail(`no entry "${key}" in ${MANIFEST}`);
@@ -68,8 +72,10 @@ console.log(`[yt] entry "${key}": ${FILE}`);
 console.log(`[yt]   title:    ${snippet.title}`);
 console.log(`[yt]   privacy:  ${status.privacyStatus}${status.publishAt ? ` → public at ${status.publishAt}` : ""}`);
 console.log(`[yt]   playlist: ${entry.playlist || "(none)"} · captions: ${CAPTIONS && existsSync(CAPTIONS) ? CAPTIONS : "(none)"}`);
-if (log[key]) console.log(`[yt]   already uploaded: https://youtube.com/watch?v=${log[key].videoId} — skipping`);
-if (DRY || log[key]) process.exit(0);
+const UPDATE = Boolean(log[key] && (SET_THUMB || MAKE_PUBLIC));
+if (log[key] && !UPDATE) console.log(`[yt]   already uploaded: https://youtube.com/watch?v=${log[key].videoId} — skipping`);
+if ((SET_THUMB || MAKE_PUBLIC) && !log[key]) fail(`entry "${key}" isn't uploaded yet`);
+if (DRY || (log[key] && !UPDATE)) process.exit(0);
 if (!existsSync(CLIENT_PATH)) fail(`OAuth client missing: ${CLIENT_PATH} (see the setup notes at the top of this file)`);
 
 async function authorize() {
@@ -101,12 +107,32 @@ const youtube = google.youtube({ version: "v3", auth: await authorize() });
 const ch = (await youtube.channels.list({ part: ["snippet"], mine: true })).data.items?.[0];
 console.log(`[yt] channel: ${ch?.snippet?.title} (${ch?.id})`);
 
+async function setThumbnail(videoId) {
+  const thumb = entry.thumbnail && resolve(BASE, entry.thumbnail);
+  if (!thumb || !existsSync(thumb)) return console.log("[yt] no thumbnail in the manifest");
+  await youtube.thumbnails.set({ videoId, media: { mimeType: thumb.endsWith(".png") ? "image/png" : "image/jpeg", body: createReadStream(thumb) } });
+  console.log(`[yt] thumbnail set: ${entry.thumbnail}`);
+}
+if (UPDATE) {
+  const videoId = log[key].videoId;
+  if (SET_THUMB) await setThumbnail(videoId);
+  if (MAKE_PUBLIC) {
+    // videos.update replaces the whole status object, so send all of it
+    await youtube.videos.update({ part: ["status"], requestBody: { id: videoId, status: { ...status, privacyStatus: "public", publishAt: undefined } } });
+    log[key].publicAt = new Date().toISOString();
+    writeFileSync(LOG_PATH, JSON.stringify(log, null, 2));
+    console.log(`[yt] now public: https://youtube.com/watch?v=${videoId}`);
+  }
+  process.exit(0);
+}
+
 console.log("[yt] uploading video…");
 const res = await youtube.videos.insert({ part: ["snippet", "status"], requestBody: { snippet, status }, media: { body: createReadStream(FILE) } });
 const videoId = res.data.id;
 log[key] = { videoId, title: snippet.title, uploadedAt: new Date().toISOString(), channel: ch?.id };
 writeFileSync(LOG_PATH, JSON.stringify(log, null, 2));
 console.log(`[yt] uploaded: https://youtube.com/watch?v=${videoId}`);
+await setThumbnail(videoId).catch((e) => console.log(`[yt] thumbnail failed (${e.message}); retry with --thumbnail`));
 
 if (CAPTIONS && existsSync(CAPTIONS)) {
   await youtube.captions.insert({
