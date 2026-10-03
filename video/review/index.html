@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Review</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Silkscreen&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #07060f; --panel: #17142e; --panel-2: #1f1b3d; --line: #2d2856; --ink: #ecebff; --muted: #9a95c4; --dim: #5f5a8f;
+    --gpu: #3df5c4; --cpu: #ffab40; --hot: #ff4d8d; --gold: #ffe066; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 "Space Grotesk", system-ui, sans-serif; }
+  header { display: flex; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 2px solid var(--line); flex-wrap: wrap; }
+  header h1 { font: 18px Silkscreen; margin: 0; }
+  header .gpu { color: var(--gpu); }
+  select, button, textarea { font: inherit; color: var(--ink); background: var(--panel-2); border: 2px solid var(--line); }
+  button { cursor: pointer; padding: 5px 10px; font-family: "JetBrains Mono"; font-size: 13px; }
+  button:hover { border-color: var(--muted); }
+  button.on { border-color: var(--gpu); color: var(--gpu); }
+  .wrap { display: grid; grid-template-columns: 1fr 380px; gap: 16px; padding: 16px; height: calc(100vh - 56px); }
+  .main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border: 2px solid var(--line); max-height: calc(100vh - 330px); margin: 0 auto; }
+  .stage video, .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stage canvas { cursor: crosshair; }
+  .stage.playing canvas { pointer-events: none; }
+  .bar { position: relative; height: 34px; background: var(--panel); border: 2px solid var(--line); cursor: pointer; user-select: none; }
+  .bar .seg { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); font: 10px "JetBrains Mono"; color: var(--dim); padding: 1px 3px; overflow: hidden; white-space: nowrap; }
+  .bar .seg.cur { background: rgba(61,245,196,.08); color: var(--gpu); }
+  .bar .head { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--gold); pointer-events: none; }
+  .bar .pin { position: absolute; bottom: -2px; width: 10px; height: 10px; margin-left: -5px; background: var(--hot); transform: rotate(45deg); }
+  .bar .pin.done { background: var(--dim); }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .time { font: 14px "JetBrains Mono"; min-width: 150px; }
+  .line { color: var(--muted); font-size: 14px; min-height: 2.9em; }
+  .line b { color: var(--gpu); font-family: "JetBrains Mono"; font-weight: 400; }
+  .swatch { width: 24px; height: 24px; padding: 0; }
+  textarea { width: 100%; min-height: 70px; padding: 8px; resize: vertical; }
+  .side { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .list { overflow-y: auto; display: grid; gap: 8px; align-content: start; flex: 1; }
+  .note { background: var(--panel); border: 2px solid var(--line); padding: 8px; display: grid; gap: 6px; cursor: pointer; }
+  .note:hover { border-color: var(--muted); }
+  .note.done { opacity: .5; }
+  .note.sel { border-color: var(--gold); }
+  .note img { width: 100%; display: block; }
+  .note .meta { font: 12px "JetBrains Mono"; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
+  .note .acts { display: flex; gap: 6px; }
+  .note .acts button { font-size: 11px; padding: 2px 6px; }
+  .hint { color: var(--dim); font-size: 12px; }
+  kbd { font: 11px "JetBrains Mono"; border: 1px solid var(--line); padding: 0 4px; color: var(--muted); }
+  @media (max-width: 1000px) { .wrap { grid-template-columns: 1fr; height: auto; } .stage { max-height: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>VIDEO <span class="gpu">REVIEW</span></h1>
+  <select id="vid"></select>
+  <span class="hint"><kbd>space</kbd> play/pause · <kbd>←</kbd><kbd>→</kbd> 1 frame · <kbd>shift</kbd>+arrows 1 s · <kbd>ctrl</kbd>+<kbd>enter</kbd> save note · <kbd>ctrl</kbd>+<kbd>z</kbd> undo stroke</span>
+</header>
+<div class="wrap">
+  <div class="main">
+    <div class="stage" id="stage"><video id="v" preload="auto" playsinline></video><canvas id="ink" width="1920" height="1080"></canvas></div>
+    <div class="bar" id="bar"></div>
+    <div class="row">
+      <button id="play">▶ PLAY</button>
+      <button id="back">◀ FRAME</button><button id="fwd">FRAME ▶</button>
+      <span class="time" id="time">0:00.00</span>
+      <span style="flex:1"></span>
+      <button data-tool="pen" class="on">PEN</button><button data-tool="arrow">ARROW</button><button data-tool="box">BOX</button>
+      <button class="swatch on" data-color="#ff4d8d" style="background:#ff4d8d"></button>
+      <button class="swatch" data-color="#ffe066" style="background:#ffe066"></button>
+      <button class="swatch" data-color="#3df5c4" style="background:#3df5c4"></button>
+      <button class="swatch" data-color="#ffffff" style="background:#ffffff"></button>
+      <button id="undo">UNDO</button><button id="clear">CLEAR</button>
+    </div>
+    <div class="line" id="line"></div>
+  </div>
+  <div class="side">
+    <textarea id="text" placeholder="Pause, draw on the frame if it helps, and describe what to change…"></textarea>
+    <div class="row"><button id="save">SAVE NOTE AT THIS FRAME</button><span class="hint" id="status"></span></div>
+    <div class="row"><label class="hint"><input type="checkbox" id="hideDone"> hide done</label><span class="hint" id="count"></span></div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const EP = new URLSearchParams(location.search).get("ep") || "ep02";
+  const BASE = `/video/${EP}/`;
+  const FPS = 30;
+  const v = $("#v"), ink = $("#ink"), g = ink.getContext("2d"), bar = $("#bar");
+  let videos = [], timeline = [], notes = [], strokes = [], cur = null, tool = "pen", color = "#ff4d8d", selected = null;
+
+  const fmtT = (t) => `${Math.floor(t / 60)}:${(t % 60).toFixed(2).padStart(5, "0")}`;
+  const segAt = (t) => timeline.find((s) => t >= s.t0 && t < s.t1) || timeline[timeline.length - 1];
+  const api = (path, body) => fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}).then((r) => r.json());
+
+  async function init() {
+    videos = await api(`/api/videos?ep=${EP}`);
+    $("#vid").innerHTML = videos.map((x, i) => `<option value="${i}">${x.path} · ${new Date(x.mtime * 1000).toLocaleString()}</option>`).join("");
+    $("#vid").onchange = () => loadVideo(+$("#vid").value);
+    if (videos.length) await loadVideo(0);
+    await refresh();
+  }
+  async function loadVideo(i) {
+    const x = videos[i];
+    v.src = `${BASE}${x.path}?m=${x.mtime}`;
+    try { timeline = await (await fetch(`${BASE}${x.timeline}?m=${Date.now()}`)).json(); } catch { timeline = []; }
+    drawBar();
+  }
+  const video = () => videos[+$("#vid").value] || {};
+
+  // ---------- timeline bar ----------
+  function drawBar() {
+    const D = v.duration || (timeline.length ? timeline[timeline.length - 1].t1 : 1);
+    const t = v.currentTime, s = segAt(t);
+    bar.innerHTML = timeline.map((x) => `<div class="seg${s && x.id === s.id ? " cur" : ""}" style="left:${(x.t0 / D) * 100}%;width:${((x.t1 - x.t0) / D) * 100}%">${x.id}</div>`).join("")
+      + notes.filter((n) => n.video === video().path).map((n) => `<div class="pin${n.done ? " done" : ""}" style="left:${(n.t / D) * 100}%" title="${n.text.replace(/"/g, "&quot;")}"></div>`).join("")
+      + `<div class="head" style="left:${(t / D) * 100}%"></div>`;
+  }
+  function seekFromBar(e) {
+    const r = bar.getBoundingClientRect(), D = v.duration || 1;
+    seek(Math.max(0, Math.min(D, ((e.clientX - r.left) / r.width) * D)));
+  }
+  bar.addEventListener("pointerdown", (e) => { bar.setPointerCapture(e.pointerId); seekFromBar(e); bar.onpointermove = seekFromBar; });
+  bar.addEventListener("pointerup", () => { bar.onpointermove = null; });
+
+  function seek(t) { v.pause(); v.currentTime = Math.round(t * FPS) / FPS + 0.001; }
+  function update() {
+    const t = v.currentTime, s = segAt(t);
+    $("#time").textContent = `${fmtT(t)} · f${Math.round(t * FPS)}`;
+    $("#line").innerHTML = s ? `<b>${s.id} · ${s.scene}</b> &nbsp;${s.text || ""}` : "";
+    drawBar();
+  }
+  v.addEventListener("timeupdate", update);
+  v.addEventListener("seeked", update);
+  v.addEventListener("loadedmetadata", update);
+  v.addEventListener("play", () => { $("#stage").classList.add("playing"); $("#play").textContent = "❚❚ PAUSE"; clearInk(); selected = null; renderList(); });
+  v.addEventListener("pause", () => { $("#stage").classList.remove("playing"); $("#play").textContent = "▶ PLAY"; update(); });
+  (function tick() { if (!v.paused) update(); requestAnimationFrame(tick); })();
+  const toggle = () => (v.paused ? v.play() : v.pause());
+  $("#play").onclick = toggle;
+  $("#back").onclick = () => seek(v.currentTime - 1 / FPS);
+  $("#fwd").onclick = () => seek(v.currentTime + 1 / FPS);
+
+  // ---------- drawing ----------
+  function pt(e) { const r = ink.getBoundingClientRect(); return [((e.clientX - r.left) / r.width) * 1920, ((e.clientY - r.top) / r.height) * 1080]; }
+  function paint() {
+    g.clearRect(0, 0, 1920, 1080);
+    [...strokes, cur].filter(Boolean).forEach((s) => {
+      g.strokeStyle = s.color; g.fillStyle = s.color; g.lineWidth = 7; g.lineCap = "round"; g.lineJoin = "round";
+      g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 6;
+      const [a, b] = [s.pts[0], s.pts[s.pts.length - 1]];
+      g.beginPath();
+      if (s.tool === "pen") s.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+      else if (s.tool === "box") g.rect(a[0], a[1], b[0] - a[0], b[1] - a[1]);
+      else {
+        g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]);
+        const ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+        g.moveTo(b[0], b[1]); g.lineTo(b[0] - 34 * Math.cos(ang - 0.45), b[1] - 34 * Math.sin(ang - 0.45));
+        g.moveTo(b[0], b[1]); g.lineTo(b[0] - 34 * Math.cos(ang + 0.45), b[1] - 34 * Math.sin(ang + 0.45));
+      }
+      g.stroke();
+    });
+    g.shadowBlur = 0;
+  }
+  ink.addEventListener("pointerdown", (e) => {
+    if (selected) { selected = null; strokes = []; renderList(); }
+    ink.setPointerCapture(e.pointerId); cur = { tool, color, pts: [pt(e)] }; paint();
+  });
+  ink.addEventListener("pointermove", (e) => { if (!cur) return; if (cur.tool === "pen") cur.pts.push(pt(e)); else cur.pts[1] = pt(e); paint(); });
+  ink.addEventListener("pointerup", () => { if (cur && (cur.pts.length > 1)) strokes.push(cur); cur = null; paint(); });
+  function clearInk() { strokes = []; cur = null; paint(); }
+  $("#undo").onclick = () => { strokes.pop(); paint(); };
+  $("#clear").onclick = clearInk;
+  document.querySelectorAll("[data-tool]").forEach((b) => (b.onclick = () => { tool = b.dataset.tool; document.querySelectorAll("[data-tool]").forEach((x) => x.classList.toggle("on", x === b)); }));
+  document.querySelectorAll("[data-color]").forEach((b) => (b.onclick = () => { color = b.dataset.color; document.querySelectorAll("[data-color]").forEach((x) => x.classList.toggle("on", x === b)); }));
+
+  // ---------- notes ----------
+  async function saveNote() {
+    const text = $("#text").value.trim();
+    if (!text && !strokes.length) { $("#status").textContent = "write something or draw first"; return; }
+    v.pause();
+    const t = v.currentTime, s = segAt(t) || {};
+    const snap = document.createElement("canvas"); snap.width = 1920; snap.height = 1080;
+    const sg = snap.getContext("2d"); sg.drawImage(v, 0, 0, 1920, 1080); sg.drawImage(ink, 0, 0);
+    $("#status").textContent = "saving…";
+    await api("/api/feedback", { ep: EP, t: +t.toFixed(3), seg: s.id, scene: s.scene, line: s.text, text, video: video().path, videoMtime: video().mtime,
+      snapshot: snap.toDataURL("image/png"), drawing: ink.toDataURL("image/png"), hasDrawing: strokes.length > 0 });
+    $("#text").value = ""; clearInk();
+    $("#status").textContent = `saved at ${fmtT(t)}`;
+    await refresh();
+  }
+  $("#save").onclick = saveNote;
+  async function refresh() { notes = await api(`/api/feedback?ep=${EP}`); renderList(); drawBar(); }
+  function renderList() {
+    const hide = $("#hideDone").checked;
+    const shown = notes.filter((n) => !(hide && n.done)).sort((a, b) => a.t - b.t);
+    $("#count").textContent = `${notes.filter((n) => !n.done).length} open · ${notes.filter((n) => n.done).length} done`;
+    $("#list").innerHTML = shown.map((n) => `
+      <div class="note${n.done ? " done" : ""}${selected === n.id ? " sel" : ""}" data-id="${n.id}">
+        <div class="meta"><span>#${n.id} · ${fmtT(n.t)} · ${n.seg || "?"}</span><span>${n.video === video().path ? "" : "other cut"}</span></div>
+        ${n.snapshot ? `<img src="${BASE}${n.snapshot}" loading="lazy" alt="">` : ""}
+        <div>${n.text.replace(/</g, "&lt;").replace(/\n/g, "<br>")}</div>
+        <div class="acts"><button data-act="done">${n.done ? "REOPEN" : "DONE"}</button><button data-act="edit">EDIT</button><button data-act="del">DELETE</button></div>
+      </div>`).join("");
+  }
+  $("#hideDone").onchange = renderList;
+  $("#list").addEventListener("click", async (e) => {
+    const el = e.target.closest(".note"); if (!el) return;
+    const n = notes.find((x) => x.id === +el.dataset.id), act = e.target.dataset.act;
+    if (act === "done") { await api("/api/feedback/update", { ep: EP, id: n.id, done: !n.done }); return refresh(); }
+    if (act === "del") { if (confirm(`Delete note #${n.id}?`)) { await api("/api/feedback/delete", { ep: EP, id: n.id }); return refresh(); } return; }
+    if (act === "edit") { const tx = prompt("Edit note", n.text); if (tx !== null) { await api("/api/feedback/update", { ep: EP, id: n.id, text: tx }); return refresh(); } return; }
+    // show the note: jump to its frame and lay its drawing over it
+    selected = n.id; seek(n.t); strokes = [];
+    g.clearRect(0, 0, 1920, 1080);
+    if (n.drawing) { const im = new Image(); im.onload = () => g.drawImage(im, 0, 0); im.src = `${BASE}${n.drawing}`; }
+    renderList();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target === $("#text")) { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveNote(); } return; }
+    if (e.key === " ") { e.preventDefault(); toggle(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); seek(v.currentTime - (e.shiftKey ? 1 : 1 / FPS)); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); seek(v.currentTime + (e.shiftKey ? 1 : 1 / FPS)); }
+    else if (e.key === "z" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); strokes.pop(); paint(); }
+  });
+  init();
+})();
+</script>
+</body>
+</html>

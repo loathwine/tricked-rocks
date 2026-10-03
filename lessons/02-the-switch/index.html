@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Switch · Tricked Rocks</title>
+<meta name="description" content="How a rock becomes a switch: see electricity move, wire circuits, click relays, dope silicon and build your own transistor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Silkscreen&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/lesson-shell.css">
+<link rel="stylesheet" href="lesson.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand pixel" href="../../index.html">TRICKED<span class="gpu">ROCKS</span></a>
+  <nav class="pips" id="pips" aria-label="Lesson progress"></nav>
+  <button class="btn ghost small" id="sound-toggle" aria-pressed="true" title="Toggle sound">♪ ON</button>
+</header>
+
+<main id="stage">
+
+<!-- ======================= ACT 0 · HOOK ======================= -->
+<section class="act" data-act="0" data-title="Hook">
+  <canvas id="hook-canvas" class="px hook-bg" width="96" height="54"></canvas>
+  <div class="hook-content">
+    <p class="eyebrow pixel">EP 02 · THE SWITCH</p>
+    <div class="hook-lines" id="hook-lines">
+      <p class="hl">This is a <b class="gold">switch</b>.</p>
+      <p class="hl">Your phone has about <b class="gpu">20,000,000,000</b> of them.</p>
+      <p class="hl">Each one can flip <b class="gold">billions</b> of times a second.</p>
+      <p class="hl big">None of them move.</p>
+      <p class="hl">So how do you build a switch… out of <b class="cpu">sand</b>?</p>
+    </div>
+    <div class="hook-cta" id="hook-cta">
+      <button class="btn" data-next>▶ LET'S FIND OUT</button>
+      <span class="muted small-note">~20 min · see electricity move, build circuits, make a transistor</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ACT 1 · ELECTRICITY ======================= -->
+<section class="act" data-act="1" data-title="Electricity">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 1</p>
+    <h2>What <span class="gold">is</span> electricity?</h2>
+    <p class="lede">A copper wire is <b>already full</b> of <b class="gpu">free electrons</b>: tiny negative particles that can drift between the atoms. Connecting a battery doesn't send electrons racing from one end to the other. Each one just shoves its neighbour. <b>Close the switch</b> and watch.</p>
+  </div>
+  <div class="panel">
+    <span class="tag">THE PUSH TRAVELS · THE ELECTRONS BARELY MOVE</span>
+    <canvas id="pulse" class="loopc" width="760" height="210"></canvas>
+    <div class="controls center"><button class="btn cpu-btn fixed" id="pulse-btn">CLOSE THE SWITCH</button></div>
+    <p class="muted tiny" id="pulse-state">A long copper wire, already packed with free electrons. One of them is marked.</p>
+  </div>
+  <div class="panel explain">
+    <span class="tag">SO WHAT IS VOLTAGE?</span>
+    <p>Inside a battery, chemical reactions release electrons at its <b>−</b> end and use them up at its <b>+</b> end. (No electrons cross the battery itself: charged atoms, called ions, carry the charge through the paste inside.) So the − end has <b>extra</b> electrons and the + end is <b>missing</b> some. Charges push and pull on each other (like charges repel, opposite charges attract), so this imbalance creates an <b>electric field</b>: an invisible push that reaches into the wire and shoves every free electron along it, from the crowded − end toward the + end.</p>
+    <p>Left alone, the electrons would even out the imbalance, and the wire gives them a way to do exactly that. The chemistry keeps topping the imbalance back up, which is where the energy comes from. When the chemicals run out, it can't any more: the battery is flat.</p>
+    <p><b class="gold">Voltage</b> is how much energy that push gives each bit of charge on its way around: <b>1 volt = 1 joule of energy per coulomb</b> (a coulomb is about 6.24 billion billion electrons). In the bulb, the electrons crash into atoms and hand that energy over as heat and light.</p>
+  </div>
+  <div class="panel">
+    <span class="tag">A COMPLETE LOOP</span>
+    <canvas id="loop" class="loopc" width="760" height="360"></canvas>
+    <div class="loop-ctl">
+      <label for="volt" class="pixel">BATTERY <b id="volt-val">0</b> V</label>
+      <input type="range" id="volt" min="0" max="9" step="0.5" value="0">
+      <div class="controls">
+        <button class="btn cpu-btn small fixed" id="loop-sw">SWITCH: CLOSED</button>
+        <span class="lbl">BOTTOM PIECE:</span>
+        <div class="tools" id="mat-tools" role="group" aria-label="Material of the bottom piece">
+          <button class="btn ghost small on" data-mat="copper">COPPER</button>
+          <button class="btn ghost small" data-mat="glass">GLASS</button>
+          <button class="btn ghost small" data-mat="silicon">SILICON</button>
+        </div>
+      </div>
+    </div>
+    <ul class="tasks" id="loop-tasks">
+      <li data-task="pulse">In the long wire, close the switch and watch the push race ahead of the marked electron.</li>
+      <li data-task="volt">In the loop, turn the battery up. Watch the charge pile up at its ends, the push along the wire, and the bulb.</li>
+      <li data-task="open">Open the switch. What happens to the electrons on the far side?</li>
+      <li data-task="mats">Swap the bottom piece for glass, then silicon.</li>
+    </ul>
+    <p class="muted tiny" id="loop-note">The current meter counts how much charge flows past each second.</p>
+  </div>
+  <div class="panel explain" id="loop-explain" hidden>
+    <span class="tag">WHAT YOU SAW</span>
+    <p><b>The push is fast, the electrons are slow.</b> Each electron drifts slower than a snail, around a tenth of a millimetre per second. But the push spreads along the wire at a large fraction of the speed of light, trillions of times faster, so the bulb lights the moment you close the switch. Open the switch anywhere and the push is gone everywhere: every electron in the loop stops.</p>
+    <p><b>Copper</b> has a sea of free electrons: a great <b>conductor</b>. <b>Glass</b> has none: every electron is locked to its atom, so it's an <b>insulator</b>. <b class="cpu">Silicon</b> is in between: almost all its electrons are locked up, so barely anything flows. Remember that. It's the key to everything that follows.</p>
+    <p class="muted tiny">In every circuit in this lesson, the moving cyan dots are electrons, drifting from − to +. (Engineers' diagrams often draw "current" the opposite way, from + to −. That convention was picked before anyone knew electrons existed.)</p>
+  </div>
+  <div class="next-row" id="loop-next" hidden>
+    <p class="muted">A switch is just a gap you can open and close. Let's make switches do something clever.</p>
+    <button class="btn" data-next>▶ SWITCHES THAT DECIDE</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 2 · SWITCHES DECIDE ======================= -->
+<section class="act" data-act="2" data-title="Switches decide">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 2</p>
+    <h2>A switch can <span class="gold">decide</span></h2>
+    <p class="lede" id="c-brief"></p>
+  </div>
+  <div class="panel circuit-panel">
+    <span class="tag" id="c-tag">CIRCUIT</span>
+    <svg id="circuit" class="circuit" viewBox="0 -70 680 410" role="img" aria-label="A battery, a grid of connection points, and a bulb"></svg>
+    <div class="legend-row">
+      <span><b>BATTERY</b>: pushes electrons out of its <b>−</b> end, around the loop, and back in at <b>+</b>.</span>
+      <span><b>BULB</b>: glows when electrons flow through it. <span class="muted">The cyan dots are the electrons.</span></span>
+    </div>
+    <div class="controls">
+      <button class="btn ghost small" id="c-clear">CLEAR THE CIRCUIT</button>
+    </div>
+    <p class="muted tiny" id="c-help">Click links to lay wire. Tap a placed switch to flip it on and off.</p>
+    <div class="truth" id="truth" hidden></div>
+    <div class="controls">
+      <button class="btn" id="c-test" hidden>▶ TEST</button>
+      <button class="btn" id="c-next" hidden>▶ NEXT</button>
+    </div>
+  </div>
+  <div class="next-row" id="c-done" hidden>
+    <p class="muted">Arranged the right way, switches <b class="gold">make decisions</b>. A computer does this billions of times over. But a <b>finger</b> flips these switches. A computer needs switches that flip <b>other switches</b>.</p>
+    <button class="btn" data-next>▶ A SWITCH FLIPPED BY ELECTRICITY</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 3 · THE RELAY ======================= -->
+<section class="act" data-act="3" data-title="The relay">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 3</p>
+    <h2>The <span class="cpu">relay</span></h2>
+    <p class="lede">Wrap a wire around iron and send a current through it, and the iron becomes a <b>magnet</b>. Put a springy metal lever next to it, and the magnet can pull the lever shut. That's a <b>relay</b>: a switch flipped by electricity. <b>Flip the switch in the left circuit.</b></p>
+  </div>
+  <div class="panel">
+    <span class="tag">ONE RELAY</span>
+    <svg id="relay" class="circuit" viewBox="0 0 640 330" role="img" aria-label="A relay: a coil pulls a lever that closes a second circuit"></svg>
+    <div class="controls center">
+      <button class="btn cpu-btn fixed" id="relay-btn">FLIP THE SWITCH</button>
+    </div>
+    <p class="muted tiny state-line" id="relay-state">The left circuit powers the magnet. The right circuit is switched by it.</p>
+  </div>
+  <div class="panel chain-panel" id="chain-panel" hidden>
+    <span class="tag">NOW CHAIN THEM</span>
+    <p>Each relay's switch powers the <b>next</b> relay's magnet. One flip sets off the whole row.</p>
+    <canvas id="chain" class="px chain" width="320" height="70"></canvas>
+    <div class="controls center">
+      <button class="btn cpu-btn" id="chain-btn">▶ START THE CHAIN</button>
+      <span class="muted tiny-inline">slowed down 25×: a real relay takes about 10 ms per click</span>
+    </div>
+    <div class="facts">
+      <div><b class="pixel cpu">1941</b><span>Konrad Zuse's <b>Z3</b>, the first working programmable, fully automatic computer, was built from about <b>2,600 relays</b> and ran at roughly 5 steps a second.</span></div>
+      <div><b class="pixel cpu">1947</b><span>A moth got stuck in a relay of the Harvard <b>Mark II</b>. The operators taped it into their logbook: "first actual case of bug being found."</span></div>
+    </div>
+  </div>
+  <div class="next-row" id="relay-next" hidden>
+    <p class="muted">Relays work, but they click, wear out, and are <b>slow</b>. The next switch got rid of the moving parts.</p>
+    <button class="btn" data-next>▶ NO MOVING PARTS</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 4 · TUBE + RACE ======================= -->
+<section class="act" data-act="4" data-title="Faster">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 4</p>
+    <h2>The <span class="gold">vacuum tube</span></h2>
+    <p class="lede">Heat a metal wire until it glows, and electrons boil off it. Inside a glass tube with the air pumped out, they fly freely to a metal plate, and a current flows <b>through empty space</b>. The plate is strongly positive, so it pulls them hard. Between filament and plate sits a fine wire mesh: the <b>grid</b>. <b>Switch the grid between negative and 0 V and watch.</b></p>
+  </div>
+  <div class="panel">
+    <span class="tag">ONE VACUUM TUBE</span>
+    <canvas id="tube" class="loopc" width="760" height="360"></canvas>
+    <div class="controls center">
+      <button class="btn fixed" id="grid-btn">GRID: NEGATIVE</button>
+    </div>
+    <p class="muted tiny state-line" id="tube-state"></p>
+    <p class="muted tiny">Why doesn't the grid need to be hugely negative to fight a +100 V plate? It sits much closer to the filament, so its push dominates there. In a typical small tube, 1 volt on the grid counts as much as 20 to 100 volts on the plate, so a few volts negative shuts it off. That's also why tubes could <b>amplify</b>: a small signal on the grid controls a big current.</p>
+  </div>
+  <div class="panel race-panel" id="race-panel" hidden>
+    <span class="tag">THE RACE · 1,000 SWITCHES IN A ROW</span>
+    <p>A computer flips switches in long chains, each one waiting for the one before. Race all three.</p>
+    <div class="lanes" id="lanes"></div>
+    <div class="controls center"><button class="btn" id="race-btn">▶ GO</button></div>
+    <p class="race-compare" id="race-compare" hidden>A vacuum tube is <b class="gold">10,000×</b> faster than a relay. A modern transistor is another <b class="gpu">100,000×</b> faster than the tube: <b>a billion times</b> faster than the relay.</p>
+  </div>
+  <div class="facts wide" id="race-facts" hidden>
+    <div><b class="pixel cpu">RELAY</b><span>A magnet pulls a metal lever. Thumb-sized, audible, and it wears out. About <b>10 ms</b> per flip.</span></div>
+    <div><b class="pixel gold">VACUUM TUBE</b><span>No moving parts, about <b>1 µs</b> per flip. But each filament glows hot all the time: <b>ENIAC</b> (1945) had <b>17,468</b> tubes, drew <b>150 kW</b>, weighed 27 tonnes, and a tube burned out every couple of days.</span></div>
+    <div><b class="pixel gpu">TRANSISTOR</b><span>The same trick, a gate controlling a flow of electrons, but inside a solid crystal. Today's are smaller than a virus and flip in about <b>10 picoseconds</b>.</span></div>
+  </div>
+  <div class="panel explain" id="why-won" hidden>
+    <span class="tag">WHY THE TRANSISTOR WON</span>
+    <p class="muted">Surprise: the first transistor (Bell Labs, 1947) wasn't faster than a good vacuum tube. It won for other reasons:</p>
+    <ul class="why-list">
+      <li><b>No heater.</b> A tube's filament burns power just to stay hot, even when it isn't switching. A transistor sits cold until it's used.</li>
+      <li><b>It doesn't wear out.</b> Filaments burn out like light bulbs, and ENIAC lost a tube every couple of days. A transistor has nothing to burn.</li>
+      <li><b>Tiny and tough.</b> No glass and no vacuum: just a speck of solid crystal that you can drop.</li>
+      <li><b>Instant on.</b> No warming up.</li>
+      <li><b class="gold">It can be printed by the billion.</b> From 1958 to 1960 (Jack Kilby, then Robert Noyce), several parts, and soon many transistors, were made together on one chip: the <b>integrated circuit</b>. And every time they were made smaller, they also got faster, cheaper and less power-hungry. That's where the picoseconds came from.</li>
+    </ul>
+  </div>
+  <div class="next-row" id="race-next" hidden>
+    <p class="muted">The transistor wins by a factor of a billion. But how can a piece of solid rock act like that grid?</p>
+    <button class="btn" data-next>▶ INTO THE SILICON</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 5 · DOPING ======================= -->
+<section class="act" data-act="5" data-title="Doping">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 5</p>
+    <h2>Sand that conducts… <span class="gold">sometimes</span></h2>
+    <p class="lede">Zoom into silicon. A silicon atom has 14 electrons, but 10 sit in inner shells, held tight to the nucleus. Only its <b>4 outer electrons</b> matter here, and each atom shares them with its 4 neighbours: those shared pairs are the <b>bonds</b>. Every electron is locked in a bond, so nothing is free to move, and silicon barely conducts. Unless you swap in a few different atoms.</p>
+  </div>
+  <div class="dope-layout">
+    <div class="panel">
+      <span class="tag">A SILICON CRYSTAL</span>
+      <canvas id="lattice" class="lattice" width="720" height="400"></canvas>
+      <div class="controls">
+        <div class="tools" id="dope-tools" role="group" aria-label="Atom to place">
+          <button class="btn ghost small on" data-dope="P">PHOSPHORUS · 5 e⁻</button>
+          <button class="btn ghost small" data-dope="B">BORON · 3 e⁻</button>
+          <button class="btn ghost small" data-dope="Si">SILICON · 4 e⁻</button>
+        </div>
+        <button class="btn small cpu-btn fixed" id="volt-btn">APPLY VOLTAGE</button>
+      </div>
+    </div>
+    <div class="panel side-meter">
+      <span class="tag">CURRENT</span>
+      <div class="meter"><div class="meter-fill" id="meter-fill"></div><div class="meter-goal"></div></div>
+      <p class="mono" id="meter-val">no voltage</p>
+      <p class="muted tiny">current = free charges × how hard the voltage pushes them</p>
+      <div class="legend">
+        <span><i class="b"></i> electron locked in a bond</span>
+        <span><i class="chg e">−</i> free electron</span>
+        <span><i class="chg h">+</i> hole: a missing electron, acts like a + charge</span>
+      </div>
+    </div>
+  </div>
+  <div class="panel steps-panel">
+    <span class="tag">STEPS</span>
+    <ol class="steps" id="dope-steps">
+      <li data-step="0">Press <b>APPLY VOLTAGE</b> on the pure crystal. Does anything flow?</li>
+      <li data-step="1">Pick <b class="gpu">PHOSPHORUS</b> and click one silicon atom to swap it.</li>
+      <li data-step="2">Swap in more until the current passes the gold line.</li>
+    </ol>
+    <p class="step-note" id="dope-note"></p>
+  </div>
+  <div class="panel explain" id="dope-explain" hidden>
+    <span class="tag">WHAT YOU JUST DID</span>
+    <p><b class="gpu">Phosphorus</b> has 5 outer electrons: 4 fit into bonds, and <b>1 is left over</b>, free to roam. The voltage pushes the free ones along: a current. Silicon with phosphorus in it is called <b class="gpu">n-type</b> (n for the negative electrons).</p>
+    <p><b style="color:var(--hot)">Boron</b> has only 3, so one bond is missing an electron: a <b>hole</b>. A neighbouring electron can hop into it, which moves the hole the other way, like a bubble in water. Holes carry current too, as if they were positive charges. That's <b style="color:var(--hot)">p-type</b>.</p>
+    <p>One subtle thing: doped silicon is still <b>electrically neutral</b>. Think of each atom as a <b>core</b> (the nucleus plus its tightly held inner electrons) with outer electrons around it. The core's leftover charge always matches its number of outer electrons: <b>+4</b> for silicon, <b>+5</b> for phosphorus, <b>+3</b> for boron. So phosphorus brings one extra outer electron <i>and</i> one extra unit of + charge in its core, and boron one fewer of each. Remember that for the next act.</p>
+    <p class="muted">Real chips swap only about one atom in a few thousand to one in tens of millions, yet the conductivity can rise by a factor of millions. This is called <b>doping</b>.</p>
+  </div>
+  <div class="next-row" id="dope-next" hidden>
+    <p class="muted">Now you can make silicon conduct wherever you want. Next: make it conduct only <b>when you say so</b>.</p>
+    <button class="btn" data-next>▶ BUILD A TRANSISTOR</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 6 · TRANSISTOR ======================= -->
+<section class="act" data-act="6" data-title="Transistor">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 6</p>
+    <h2>Build a <span class="gpu">transistor</span></h2>
+    <p class="lede" id="fab-brief">Chip factories build transistors layer by layer. Follow the steps.</p>
+  </div>
+  <div class="panel">
+    <span class="tag">CROSS-SECTION OF ONE TRANSISTOR</span>
+    <canvas id="fet" class="fet" width="760" height="420"></canvas>
+    <div class="legend-row">
+      <span><i class="chg e">−</i> free electron · <b class="gpu">n-type</b> has spare ones</span>
+      <span><i class="chg h">+</i> hole · <b style="color:var(--hot)">p-type</b> is full of them</span>
+      <span><b class="muted">+ −</b> fixed charged atoms (ions) in the barrier</span>
+      <span><b>glass</b>: an insulator, nothing crosses it</span>
+    </div>
+    <div class="fab-steps" id="fab-steps"></div>
+    <div class="gate-ctl" id="gate-ctl" hidden>
+      <label for="vg" class="pixel">GATE BATTERY <b id="vg-val">0.0</b> V</label>
+      <input type="range" id="vg" min="0" max="3" step="0.05" value="0">
+      <p class="fet-caption" id="fet-caption"></p>
+      <p class="muted tiny" id="fet-goal">Turn the gate battery up slowly. Watch the space under the gate.</p>
+    </div>
+  </div>
+  <div class="panel explain" id="junction-explain" hidden>
+    <span class="tag">WHY DON'T THE EXTRA ELECTRONS JUST SPREAD INTO THE P-TYPE?</span>
+    <p><b>Some do.</b> Right at each border, electrons wander across and fill holes. But each electron that leaves the n-type leaves its phosphorus atom behind with that extra + charge in its core and nothing to balance it: a fixed <b class="gpu">+</b> charge. Each hole it fills gives a boron atom one electron more than its core can balance: a fixed <b style="color:var(--hot)">−</b> charge.</p>
+    <p>Those fixed charges can't move. Together they make an electric field across the border that <b>pushes further electrons back</b>. Almost instantly it balances, leaving a thin <b>barrier</b> with no free charges at all: the <b>depletion zone</b>. For silicon its push is worth a little <b>under a volt</b>. In the drawing it's the thin band around each island, with its fixed + and − charges.</p>
+  </div>
+  <div class="panel explain" id="fet-explain" hidden>
+    <span class="tag">YOU BUILT A MOSFET</span>
+    <p>The <b class="gpu">source</b> and <b class="gpu">drain</b> are n-type islands, full of free electrons. Between them is p-type silicon, fenced off by two barriers, so normally nothing gets across: <b>off</b>.</p>
+    <p>A positive voltage on the <b>gate</b> pulls electrons up against the glass (opposite charges attract) and pushes the holes away. Past the <b>threshold</b>, enough electrons gather to form a thin <b class="gpu">channel</b>, a bridge of free electrons from source to drain: <b>on</b>. Take the voltage away and the bridge dissolves.</p>
+    <p><b>Why do the electrons go from source to drain?</b> The battery decides. The source is wired to its <b>−</b> end, and the drain, through the bulb, to its <b>+</b> end. Electrons always drift toward +. "Source" just means where the electrons come from, and "drain" where they drain away. The transistor itself is symmetric: flip the battery and the two islands swap names.</p>
+    <p><b>Why are both islands n-type?</b> So that once the channel forms, there's one unbroken road of free electrons: island, channel, island. Without a channel, the p-type in between puts two barriers back to back, so nothing gets through in either direction.</p>
+    <p><b>What is the gate, really?</b> Just a piece of conductor sitting on the glass. Because the glass blocks current, the gate draws almost no current: it only needs a <b>voltage</b> on it, like pressing on one side of a wall to move what's on the other side.</p>
+    <p><b>Where does that voltage come from?</b> Here, an adjustable battery. In a real chip, nobody turns a knob: each gate is connected by an ordinary wire to the output of <b>another transistor</b>. Switches flipping switches.</p>
+    <p class="gold">No moving parts: only the electrons move. Nearly every one of the billions of switches in your devices is one of these.</p>
+  </div>
+  <div class="panel not-panel" id="not-panel" hidden>
+    <span class="tag">THE MIRROR-IMAGE TRANSISTOR</span>
+    <p>Flip every layer of the transistor you just built: an <b class="gpu">n-type</b> body with <b style="color:var(--hot)">p-type</b> islands. Now the free charges in the islands are <b>holes</b>, and the gate has to pull <b>holes</b> up into a channel. Holes are pulled by a <b>negative</b> gate, so this one switches on when its gate is <b>low</b>.</p>
+    <p class="muted">"Low" compared to its source. In a chip, an n-type's source is wired to ground (0 V) and a p-type's source to the supply (+1 V). So a gate at 0 V is 1 V <i>below</i> the p-type's source, and turns it on. A gate at 1 V turns on the n-type instead.</p>
+    <canvas id="pnc" class="loopc" width="760" height="300"></canvas>
+    <div class="controls center"><button class="btn fixed wide" id="pn-gate">GATES: 0 V · SET TO 1 V</button></div>
+    <span class="tag" style="margin-top:28px">A SWITCH THAT SAYS NO</span>
+    <p>A relay makes a NOT easily: let the magnet pull a contact <i>open</i>. But a transistor only turns <b>on</b> when you push its gate. So how do you get an output that is <b>0 when the input is 1</b>? The trick isn't a different switch. It's <b>where you put it</b>.</p>
+    <p class="muted">Inside a chip, an output is a wire's <b>voltage</b>: near the supply means <b class="gold">1</b>, near ground means <b>0</b>. So a switch can make a 0 by <b>closing</b>, as long as closing connects the output to ground.</p>
+    <div class="topo">
+      <span class="lbl pixel muted">BUILD IT WITH</span>
+      <button class="btn ghost small on" data-not="switch">1 · A SWITCH + RESISTOR</button>
+      <button class="btn ghost small" data-not="nmos">2 · A TRANSISTOR + RESISTOR</button>
+      <button class="btn ghost small" data-not="palone">3 · JUST A P-TYPE?</button>
+      <button class="btn ghost small" data-not="cmos">4 · P-TYPE + N-TYPE</button>
+    </div>
+    <canvas id="notc" class="loopc" width="760" height="400"></canvas>
+    <div class="controls center"><button class="btn fixed wide" id="not-in">INPUT: 0 · SET IT TO 1</button></div>
+    <p class="state-line" id="not-state"></p>
+  </div>
+  <div class="next-row" id="fet-next" hidden>
+    <p class="muted">Your transistor is drawn big. The real ones are almost unimaginably small.</p>
+    <button class="btn" data-next>▶ SHRINK IT</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 7 · SHRINK ======================= -->
+<section class="act" data-act="7" data-title="Shrink it">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 7</p>
+    <h2>How small is <span class="gpu">small</span>?</h2>
+    <p class="lede">Drag the slider to zoom from a relay down to a single atom.</p>
+  </div>
+  <div class="panel">
+    <span class="tag" id="zoom-tag">1 CM ACROSS</span>
+    <canvas id="zoom" class="zoomc" width="960" height="420"></canvas>
+    <input type="range" id="zoom-slider" min="0" max="1000" value="0" aria-label="Zoom">
+    <p class="muted tiny">A modern transistor is about 50 nm across, and its thinnest parts are only a few nanometres: a few dozen atoms.</p>
+  </div>
+  <div class="panel">
+    <span class="tag">TRANSISTORS ON ONE CHIP</span>
+    <div class="moore" id="moore"></div>
+    <p class="muted tiny">Log scale. Roughly doubling every two years for half a century: <b>Moore's law</b>.</p>
+  </div>
+  <div class="next-row">
+    <p class="muted">So where does each tiny gate get its voltage from?</p>
+    <button class="btn" data-next>▶ SWITCHES FLIPPING SWITCHES</button>
+  </div>
+</section>
+
+<!-- ======================= ACT 8 · FINALE ======================= -->
+<section class="act" data-act="8" data-title="Finale">
+  <div class="act-head">
+    <p class="eyebrow pixel">ACT 8</p>
+    <h2>Switches flipping <span class="gold">switches</span></h2>
+    <p class="lede">In a chip, each transistor's output is wired to the <b>gate</b> of the next. Turn one on, and it turns on the next, and the next. It's the relay chain from Act 3, but with no clicks and no moving parts. <b>Flip the first gate.</b></p>
+  </div>
+  <div class="panel">
+    <span class="tag">A CHAIN OF TRANSISTORS</span>
+    <canvas id="fchain" class="px chain" width="320" height="80"></canvas>
+    <div class="controls center">
+      <button class="btn fixed wide" id="fchain-btn">▶ FLIP THE FIRST GATE</button>
+      <span class="muted tiny-inline">slowed down billions of times: a real transistor flips in about 10 picoseconds</span>
+    </div>
+    <div class="rail-legend"><span><i style="background:#ff8a5c"></i> supply rail, about 1 V</span><span><i style="background:#5f5a8f"></i> ground, 0 V</span></div>
+    <div class="aside">
+      <p><b>Where do all those batteries come from?</b> They don't exist. The diagrams in this lesson each drew their own battery so you could see what drives that one circuit. A real chip has <b>one</b> power source, and two wires run everywhere: the <b>supply rail</b>, held at about 1 volt, and <b>ground</b>, at 0 V. Every one of its billions of transistors connects between those same two wires.</p>
+      <p>The power comes from one battery (a phone's, converted down from about 3.7 V) or a power supply plugged into the wall, and the wall is pushed by a power plant, solar panel or wind turbine. The transistors don't store any of it: each switch uses a tiny bit and turns it into heat. Billions of switches, billions of times a second, add up, which is why chips need fans and why a busy phone gets warm.</p>
+    </div>
+    <p class="muted">Wire them in clever patterns, a few at a time, and these chains start to <b>decide</b> things, like the AND and OR circuits you built in Act 2. Those patterns are called <b class="gold">logic gates</b>.</p>
+  </div>
+  <div class="finale-card panel" id="finale-card" hidden>
+    <span class="tag">WHAT YOU DID TODAY</span>
+    <ul class="achievements">
+      <li><span>Pushed electrons around a loop, and found out why glass and silicon resist.</span></li>
+      <li><span>Built <b>AND</b> and <b>OR</b> circuits from two switches.</span></li>
+      <li><span>Flipped a <b class="cpu">relay</b> and a <b class="gold">vacuum tube</b>, the switches of the first computers.</span></li>
+      <li><span>Doped silicon into <b class="gpu">n-type</b> and <b style="color:var(--hot)">p-type</b>.</span></li>
+      <li><span>Built a <b class="gpu">transistor</b> from a bare wafer, and found its threshold.</span></li>
+      <li><span>Set off a chain of transistors, each one switching the next.</span></li>
+    </ul>
+    <div class="next-ep">
+      <p class="eyebrow pixel">NEXT · EP 03</p>
+      <h3>Gates</h3>
+      <p class="muted">How do you wire transistors into AND, OR and NOT? And why can a single kind of gate, NAND, build every other gate, and from there a whole computer?</p>
+    </div>
+    <div class="controls">
+      <a class="btn" href="../../index.html">◀ SERIES</a>
+      <a class="btn ghost" href="../01-parallel-machine/">EP 01: THE PARALLEL MACHINE</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="act-nav" id="act-nav">
+  <button class="btn ghost small" id="prev-act">◀ BACK</button>
+  <span class="pixel muted" id="act-label"></span>
+  <button class="btn ghost small" id="skip-act">NEXT ▶</button>
+</footer>
+
+<script src="../../assets/js/sfx.js"></script>
+<script src="lesson.js"></script>
+<script src="../../assets/js/review.js"></script>
+</body>
+</html>

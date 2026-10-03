@@ -12,3 +12,7 @@ video/*/upload-log.json
 video/*/thumbs/t*.png
 video/*/thumbs/compare*.jpg
 video/*/durations.txt
+video/*/review/
+lessons/*/review/
+video/*/prev*/
+video/*/*.log
